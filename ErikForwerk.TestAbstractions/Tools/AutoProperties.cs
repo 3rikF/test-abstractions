@@ -142,7 +142,7 @@ public sealed class AutoProperties(Random? rand = null)
 
 	public Array GenerateArray(Type elementType, int minLength, int maxLength)
 	{
-		ArgumentException.ThrowIfNullOrEmpty(nameof(elementType));
+		ArgumentNullException.ThrowIfNull(elementType);
 		ArgumentOutOfRangeException.ThrowIfNegative(minLength);
 		ArgumentOutOfRangeException.ThrowIfNegative(maxLength);
 		ArgumentOutOfRangeException.ThrowIfNegative(maxLength-minLength);
