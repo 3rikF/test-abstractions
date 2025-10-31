@@ -45,7 +45,7 @@ public static class CompareHelper
 			//--- if its an array, compare the elements -----------------------
 			else if (prop.PropertyType.IsArray && expectedValue is Array expectedArray && actualValue is Array actualArray)
 			{
-				//--- nu recursion, just one level arrays ---
+				//--- no recursion, just one level arrays ---
 				for (int i = 0; i < expectedArray.Length; i++)
 					assert("\t", $"{prop.Name}[{i}]", expectedArray.GetValue(i), actualArray.GetValue(i));
 			}
