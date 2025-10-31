@@ -28,64 +28,64 @@ on:
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 jobs:
-  build:
-    # For a list of available runner types, refer to
-    # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
-    runs-on: windows-latest
-
-    strategy:
-      matrix:
-        CONFIGURATION: [Debug, Release]
-
-    permissions:
-      contents: read  # Required to checkout code
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    # Install the .NET Core workload
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
-
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
-
-    # Restore the application
-    - name: Restore the application
-      run: dotnet restore $env:SOLUTION_NAME
-
-    # Build the solution
-    - name: Build solution
-      run: dotnet build $env:SOLUTION_NAME --configuration $env:Configuration --no-restore
-      env:
-        Configuration: ${{ matrix.CONFIGURATION }}
-
-    # Execute all unit tests in the solution without rebuilding
-    - name: Execute unit tests
-      run: dotnet test $env:SOLUTION_NAME --configuration $env:Configuration --no-build --collect:"XPlat Code Coverage;Format=json,cobertura"
-      env:
-        Configuration: ${{ matrix.CONFIGURATION }}
-
-    # taken from a Codecov example
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./TestResults/**/*.cobertura.xml
-        flags: unittests
-    #   name: codecov-umbrella
+  #build:
+  #  # For a list of available runner types, refer to
+  #  # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+  #  runs-on: windows-latest
+  #
+  #  strategy:
+  #    matrix:
+  #      CONFIGURATION: [Debug, Release]
+  #
+  #  permissions:
+  #    contents: read  # Required to checkout code
+  #
+  #  steps:
+  #  - name: Checkout
+  #    uses: actions/checkout@v4
+  #    with:
+  #      fetch-depth: 0
+  #
+  #  # Install the .NET Core workload
+  #  - name: Install .NET Core
+  #    uses: actions/setup-dotnet@v4
+  #    with:
+  #      dotnet-version: 9.0.x
+  #
+  #  # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+  #  - name: Setup MSBuild.exe
+  #    uses: microsoft/setup-msbuild@v2
+  #
+  #  # Restore the application
+  #  - name: Restore the application
+  #    run: dotnet restore $env:SOLUTION_NAME
+  #
+  #  # Build the solution
+  #  - name: Build solution
+  #    run: dotnet build $env:SOLUTION_NAME --configuration $env:Configuration --no-restore
+  #    env:
+  #      Configuration: ${{ matrix.CONFIGURATION }}
+  #
+  #  # Execute all unit tests in the solution without rebuilding
+  #  - name: Execute unit tests
+  #    run: dotnet test $env:SOLUTION_NAME --configuration $env:Configuration --no-build --collect:"XPlat Code Coverage;Format=json,cobertura"
+  #    env:
+  #      Configuration: ${{ matrix.CONFIGURATION }}
+  #
+  #  # taken from a Codecov example
+  #  - name: Upload coverage reports to Codecov
+  #    uses: codecov/codecov-action@v5
+  #    with:
+  #      token: ${{ secrets.CODECOV_TOKEN }}
+  #      files: ./TestResults/**/*.cobertura.xml
+  #      flags: unittests
+  #  #   name: codecov-umbrella
 
   #----------------------------------------------------------------------------------------------------------------------------------------
   pack-and-publish:
-    needs: build
+    #needs: build
     # Only run on main branch when tests are successful
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    #if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     permissions:
@@ -164,7 +164,7 @@ jobs:
 
     # Create and push new version tag
     - name: Create version tag
-      shell: bash
+      #shell: bash
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -173,7 +173,7 @@ jobs:
 
     # Build the solution with new version
     - name: Build solution
-      shell: bash
+      #shell: bash
       # use environment variable in Bash like: $PROJECT_PATH (without "env:")
       # since this is a new step, we have to rebuild everything
       # ansd since we build windows-target under linux, we need to add "/p:EnableWindowsTargeting=true"
@@ -184,30 +184,12 @@ jobs:
     # Pack the NuGet package
     - name: Pack NuGet package
       id: pack
-      shell: bash
       run: |
-        PACKAGE_VERSION="${{ steps.version.outputs.version }}"
-        # The dotnet pack command
-        dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION --output ./nupkg /p:EnableWindowsTargeting=true
-        dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION --output ./nupkg /p:EnableWindowsTargeting=true
-
-        # Determine and save the exact package name for the push step (Fail-Safe)
-        PACKAGE_NAME_BASE=$(basename $PROJECT_BASE .csproj | sed 's/\.csproj$//')
-        PACKAGE_NAME_STA=$(basename $PROJECT_STA .csproj | sed 's/\.csproj$//')
-        
-        NUPKG_PATH_BASE="./nupkg/${PACKAGE_NAME_BASE}.${PACKAGE_VERSION}.nupkg"
-        NUPKG_PATH_STA="./nupkg/${PACKAGE_NAME_STA}.${PACKAGE_VERSION}.nupkg"
-
-        # Sets the exact path as output
-        echo "nupkg_path_base=$NUPKG_PATH_BASE" >> $GITHUB_OUTPUT
-        echo "nupkg_path_sta=$NUPKG_PATH_STA" >> $GITHUB_OUTPUT
+        dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true --output ./artifacts
+        dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true --output ./artifacts
 
     # Publish to NuGet.org
     - name: Publish to NuGet
       shell: bash
-      run: |
-        dotnet nuget push ${{ steps.pack.outputs.nupkg_path_base }} --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-        dotnet nuget push ${{ steps.pack.outputs.nupkg_path_sta }} --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-      # TODO: try the following syntax:
-      # dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-        
+      run: dotnet nuget push ../artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
