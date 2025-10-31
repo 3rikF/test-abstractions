@@ -40,6 +40,21 @@ public abstract class TestBase(ITestOutputHelper output)
 	protected IDisposable CreateTestFileCleanUp(params string[] filePaths)
 		=> new TestFileCleanUp(TestConsole, filePaths);
 
+	/// <summary>
+	/// 'B' as in 'Bracketed'.
+	/// Converts the specified object to a string representation enclosed in square brackets,
+	/// handling null and empty values with predefined constants.
+	/// </summary>
+	/// <remarks>
+	/// If the object's string representation already contains square brackets,
+	/// they are trimmed before enclosing the result in new brackets.
+	/// This method ensures consistent formatting for null and empty values.
+	/// </remarks>
+	/// <param name="toStringObject">The object to convert to a string. If null, a predefined constant for null strings is returned.</param>
+	/// <returns>
+	/// A string enclosed in square brackets if the object's string representation is non-empty;
+	/// a predefined constant for null or empty strings otherwise.
+	/// </returns>
 	protected static string B(object? toStringObject)
 	{
 		if (toStringObject?.ToString() is not string s)
@@ -57,14 +72,17 @@ public abstract class TestBase(ITestOutputHelper output)
 	//-----------------------------------------------------------------------------------------------------------------
 	#region Test Helper Actions
 
+	[DoesNotReturn]
 	protected static void FailTest()
-		=> Assert.Fail("This method should not have been executed.");
+		=> throw FailException.ForFailure("This method should not have been executed.");
 
+	[DoesNotReturn]
 	protected static void FailTest<T1>(T1 p1)
-		=> Assert.Fail($"This method should not have been executed. [param={p1}]");
+		=> throw FailException.ForFailure($"This method should not have been executed. [param={p1}]");
 
+	[DoesNotReturn]
 	protected static void FailTest<T1, T2>(T1 p1, T2 p2)
-		=> Assert.Fail($"This method should not have been executed. [param1={p1}], [param2={p2}]");
+		=> throw FailException.ForFailure($"This method should not have been executed. [param1={p1}], [param2={p2}]");
 
 	#endregion Test Helper Actions
 

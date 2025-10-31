@@ -106,7 +106,6 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	private sealed class TestClassWithIncorperativeTypes
 	{
 		public Uri? UriProperty { get; set; }
-
 	}
 
 	#endregion Nested Types
@@ -125,7 +124,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(result);
-		TestConsole.WriteLine($"[✔️OK] Successfully generated flat object");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated flat object");
 	}
 
 	[Fact]
@@ -243,35 +242,57 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(result);
-		TestConsole.WriteLine($"[✔️OK] Successfully generated object-tree");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated object-tree");
 	}
 
 	[Theory]
-	[InlineData(0, -1)]
-	[InlineData(-1, 0)]
-	[InlineData(1, -1)]
-	[InlineData(-1, -1)]
-	[InlineData(1, 0)]
-	[InlineData(10, 5)]
-	public void GenerateArray_InvalidLengths_ThrowsException(int minLength, int maxLength)
+	[InlineData(0,	-1,	true)]
+	[InlineData(-1,	0,	true)]
+	[InlineData(1,	-1,	true)]
+	[InlineData(-1,	-1,	true)]
+	[InlineData(1,	0,	true)]
+	[InlineData(10,	5,	true)]
+
+	[InlineData(0,	0,	false)]
+	[InlineData(0,	1,	false)]
+	[InlineData(1,	2,	false)]
+	[InlineData(3,	3,	false)]
+	public void GenerateArray_MinMaxLength(int minLength, int maxLength, bool exceptionExpected)
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		TestConsole.WriteLine($"Testing with minLength=[{minLength}], maxLength=[{maxLength}]");
 		AutoProperties unitUnderTest = new (new Random());
 
+		int[]? result = null;
+
 		//--- ACT -------------------------------------------------------------
-		ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(
-			() => unitUnderTest.GenerateArray<int>(minLength, maxLength));
+		Exception ex = Record.Exception(
+			() => result = unitUnderTest.GenerateArray<int>(minLength, maxLength));
 
 		//--- ASSERT ----------------------------------------------------------
-		Assert.NotNull(ex);
+		if (exceptionExpected)
+		{
+			Assert.NotNull(ex);
+			Assert.Null(result)
+				;
+			_ = Assert.IsType<ArgumentOutOfRangeException>(ex);
+			TestConsole.WriteLine($"[✔️ PASSED] Correctly threw ArgumentOutOfRangeException");
+		}
+		else
+		{
+			Assert.Null(ex);
+			Assert.NotNull(result);
+
+			Assert.InRange(result.Length, minLength, maxLength);
+			TestConsole.WriteLine($"[✔️ PASSED] Successfully generated array with length in range [{minLength}, {maxLength}]");
+		}
 	}
 
 	[Theory]
 	[InlineData(0)]
 	[InlineData(1)]
 	[InlineData(1000)]
-	public void GenerateArray_ValidLength(int length)
+	public void GenerateArray_SingleLength(int length)
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		AutoProperties unitUnderTest = new (new Random());
@@ -282,26 +303,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(result);
 		Assert.Equal(result.Length, length);
-		TestConsole.WriteLine($"[✔️OK] Successfully generated array with length [{length}]");
-	}
-
-	[Theory]
-	[InlineData(0, 0)]
-	[InlineData(0, 1)]
-	[InlineData(1, 2)]
-	[InlineData(3, 3)]
-	public void GenerateArray_ValidLengths(int minLength, int maxLength)
-	{
-		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties unitUnderTest = new (new Random());
-
-		//--- ACT -------------------------------------------------------------
-		int[] result = unitUnderTest.GenerateArray<int>(minLength, maxLength);
-
-		//--- ASSERT ----------------------------------------------------------
-		Assert.NotNull(result);
-		Assert.InRange(result.Length, minLength, maxLength);
-		TestConsole.WriteLine($"[✔️OK] Successfully generated array with length in range [{minLength}, {maxLength}]");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated array with length [{length}]");
 	}
 
 	[Fact]
@@ -321,23 +323,23 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(intArray);
 		Assert.Equal(NUM_ELEMENTS, intArray.Length);
-		TestConsole.WriteLine($"[✔️OK] Successfully generated [{intArray.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{intArray.GetType().GetElementType()!.Name}]-Array");
 
 		Assert.NotNull(strings);
 		Assert.Equal(NUM_ELEMENTS, strings.Length);
-		TestConsole.WriteLine($"[✔️OK] Successfully generated [{strings.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{strings.GetType().GetElementType()!.Name}]-Array");
 
 		Assert.NotNull(objectsA);
 		Assert.Equal(NUM_ELEMENTS, objectsA.Length);
-		TestConsole.WriteLine($"[✔️OK] Successfully generated [{objectsA.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{objectsA.GetType().GetElementType()!.Name}]-Array");
 
 		Assert.NotNull(objectsB);
 		Assert.Equal(NUM_ELEMENTS, objectsB.Length);
-		TestConsole.WriteLine($"[✔️OK] Successfully generated [{objectsB.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{objectsB.GetType().GetElementType()!.Name}]-Array");
 
 		Assert.NotNull(objectsC);
 		Assert.Equal(NUM_ELEMENTS, objectsC.Length);
-		TestConsole.WriteLine($"[✔️OK] Successfully generated [{objectsC.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{objectsC.GetType().GetElementType()!.Name}]-Array");
 	}
 
 	[Fact]
@@ -350,7 +352,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		ETestEnum value = unitUnderTest.GetRandomEnum<ETestEnum>();
 
 		//--- ASSERT ----------------------------------------------------------
-		TestConsole.WriteLine($"[✔️OK] Successfully generated random enum-value [{value}]");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated random enum-value [{value}]");
 	}
 
 	[Fact]
@@ -365,7 +367,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(ETestEnum.Three, value);
-		TestConsole.WriteLine($"[✔️OK] Successfully randomly chosen to single allowed enum-value [{value}]");
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully randomly chosen to single allowed enum-value [{value}]");
 	}
 
 	#endregion Test Methods

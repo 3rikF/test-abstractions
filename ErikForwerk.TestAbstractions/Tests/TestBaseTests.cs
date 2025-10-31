@@ -1,6 +1,8 @@
 ﻿
 using ErikForwerk.TestAbstractions.Models;
 
+using Microsoft.Extensions.Logging;
+
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -62,6 +64,46 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	#endregion Test Helper Methods
 
 	//-----------------------------------------------------------------------------------------------------------------
+	#region Test Logger Methods
+
+	[Fact]
+	public void Test_GetTestLogger()
+	{
+		//--- ARRANGE ---------------------------------------------------------
+		// (none)
+
+		//--- ACT -------------------------------------------------------------
+		TestLogger logger = GetTestLogger();
+
+		//--- ASSERT ----------------------------------------------------------
+		Assert.NotNull(logger);
+		_ = Assert.IsType<ILogger>(logger, false);
+		Assert.Empty(logger.LogMessages);
+		Assert.True(logger.IsEnabled(LogLevel.Information));
+	}
+
+	[Fact]
+	public void Test_GetTestLogger_Generic()
+	{
+		//--- ARRANGE ---------------------------------------------------------
+		// (none)
+
+		//--- ACT -------------------------------------------------------------
+		TestLoggerGeneric<TestBaseTests> logger = GetTestLogger<TestBaseTests>();
+
+		//--- ASSERT ----------------------------------------------------------
+		Assert.NotNull(logger);
+		_ = Assert.IsType<ILogger<TestBaseTests>>(logger, false);
+		_ = Assert.IsType<TestLogger>(logger, false);
+
+		Assert.Empty(logger.LogMessages);
+		Assert.Empty(logger.LogMessages);
+		Assert.True(logger.IsEnabled(LogLevel.Information));
+	}
+
+	#endregion Test Logger Methods
+
+	//-----------------------------------------------------------------------------------------------------------------
 	#region Test FailTest Actions
 
 	/// <summary>
@@ -91,10 +133,11 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param=foobar]";
-		const string TEST_PARAM			= "foobar"; // Dummy parameter to match the method signature
+		const string TEST_PARAM			= "foobar";
 
 		//--- ACT -------------------------------------------------------------
-		FailException ex = Assert.Throws<FailException>(() => FailTest(TEST_PARAM));
+		FailException ex = Assert.Throws<FailException>(
+			() => FailTest(TEST_PARAM));
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(EXPECTED_MESSAGE, ex.Message);
@@ -109,11 +152,12 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param1=foobar], [param2=69]";
-		const string TEST_PARAM1		= "foobar"; // Dummy parameter to match the method signature
-		const int TEST_PARAM2			= 69;	// Dummy parameter to match the method signature
+		const string TEST_PARAM1		= "foobar";
+		const int TEST_PARAM2			= 69;
 
 		//--- ACT -------------------------------------------------------------
-		FailException ex = Assert.Throws<FailException>(() => FailTest(TEST_PARAM1, TEST_PARAM2));
+		FailException ex = Assert.Throws<FailException>(
+			() => FailTest(TEST_PARAM1, TEST_PARAM2));
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(EXPECTED_MESSAGE, ex.Message);
@@ -151,7 +195,7 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param=foobar]";
-		const string TEST_PARAM			= "foobar"; // Dummy parameter to match the method signature
+		const string TEST_PARAM			= "foobar";
 
 		//--- ACT -------------------------------------------------------------
 		FailException ex = Assert.Throws<FailException>(

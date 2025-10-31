@@ -37,7 +37,7 @@ public static class CompareHelper
 				IEnumerator<object?> expectedBlah	= expectedEnumeration.GetEnumerator();
 				IEnumerator<object?> actualBlubb	= actualEnumeration.GetEnumerator();
 
-				//--- nu recursion, just one level arrays ---
+				//--- no recursion, just one level arrays ---
 				while (expectedBlah.MoveNext() && actualBlubb.MoveNext())
 					assert("\t", $"{prop.Name}", expectedBlah.Current, actualBlubb.Current);
 			}
