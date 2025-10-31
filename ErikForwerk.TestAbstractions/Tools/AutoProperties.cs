@@ -121,7 +121,7 @@ public sealed class AutoProperties(Random? rand = null)
 				prop.SetValue(target, genericList);
 			}
 
-			//--- else singe values or class instances ------------------------
+			//--- else single values or class instances ------------------------
 			else
 				prop.SetValue(target, GenerateSingleValue(propertyType));
 		}
