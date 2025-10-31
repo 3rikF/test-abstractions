@@ -1,5 +1,4 @@
-﻿using ErikForwerk.TestAbstractions.Models;
-
+﻿
 using Xunit;
 using Xunit.Abstractions;
 
@@ -9,69 +8,69 @@ namespace ErikForwerk.TestAbstractions.Models;
 //-----------------------------------------------------------------------------------------------------------------------------------------
 public abstract class StaTestBase : TestBase
 {
-    protected StaTestBase(ITestOutputHelper output) : base(output)
-    {
-    }
+	protected StaTestBase(ITestOutputHelper output) : base(output)
+	{
+	}
 
-    //-----------------------------------------------------------------------------------------------------------------
-    #region STA Threading Support
+	//-----------------------------------------------------------------------------------------------------------------
+	#region STA Threading Support
 
-    public sealed class STATheoryAttribute : TheoryAttribute
-    { }
+	public sealed class STATheoryAttribute : TheoryAttribute
+	{ }
 
-    public sealed class STAFactAttribute : FactAttribute
-    { }
+	public sealed class STAFactAttribute : FactAttribute
+	{ }
 
-    protected static void RunOnSTAThread(Action action)
-    {
-        Exception? exception = null;
+	protected static void RunOnSTAThread(Action action)
+	{
+		Exception? exception = null;
 
-        Thread thread = new(() =>
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-        });
+		Thread thread = new(() =>
+		{
+			try
+			{
+				action();
+			}
+			catch (Exception ex)
+			{
+				exception = ex;
+			}
+		});
 
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
 
-        if (exception is not null)
-            throw exception;
-    }
+		if (exception is not null)
+			throw exception;
+	}
 
-    protected static TReturn? RunOnSTAThread<TReturn>(Func<TReturn> action)
-    {
-        TReturn? result         = default;
-        Exception? exception    = null;
+	protected static TReturn? RunOnSTAThread<TReturn>(Func<TReturn> action)
+	{
+		TReturn? result			= default;
+		Exception? exception	= null;
 
-        Thread thread = new(() =>
-        {
-            try
-            {
-                result = action();
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-        });
+		Thread thread = new(() =>
+		{
+			try
+			{
+				result = action();
+			}
+			catch (Exception ex)
+			{
+				exception = ex;
+			}
+		});
 
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
 
-        if (exception is not null)
-            throw exception;
+		if (exception is not null)
+			throw exception;
 
-        return result;
-    }
+		return result;
+	}
 
-    #endregion STA Threading Support
+	#endregion STA Threading Support
 }
