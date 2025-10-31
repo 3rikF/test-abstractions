@@ -1,4 +1,6 @@
-﻿using ErikForwerk.TestAbstractions.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using ErikForwerk.TestAbstractions.Models;
 using ErikForwerk.TestAbstractions.Tools;
 
 using Xunit;
@@ -13,6 +15,8 @@ public sealed class CompareHelperTests(ITestOutputHelper toh) : TestBase(toh)
 {
 	//-----------------------------------------------------------------------------------------------------------------
 	#region Nested Types
+
+	[ExcludeFromCodeCoverage(Justification = "Dummy class for testing purposes only.")]
 	internal record FirstDummyTestClass
 	{
 		public FirstDummyTestClass()
@@ -24,11 +28,13 @@ public sealed class CompareHelperTests(ITestOutputHelper toh) : TestBase(toh)
 		public string? Name { get; set; }
 	}
 
+	[ExcludeFromCodeCoverage(Justification = "Dummy class for testing purposes only.")]
 	internal sealed class SecondDummyTestClass
 	{
 		public IEnumerable<int>? Numbers { get; set; }
 	}
 
+	[ExcludeFromCodeCoverage(Justification = "Dummy class for testing purposes only.")]
 	internal sealed class ThirdDummyTestClass
 	{
 		public IEnumerable<object>? Objects { get; set; }
