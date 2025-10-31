@@ -187,7 +187,7 @@ jobs:
       shell: bash
       run: |
         PACKAGE_VERSION="${{ steps.version.outputs.version }}"
-        # Der dotnet pack Befehl
+        # The dotnet pack command
         dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION --output ./nupkg /p:EnableWindowsTargeting=true
         dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION --output ./nupkg /p:EnableWindowsTargeting=true
 
