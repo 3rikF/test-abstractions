@@ -103,7 +103,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	}
 
 	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
-	private sealed class TestClassWithIncorperativeTypes
+	private sealed class TestClassWithUncooperativeTypes
 	{
 		public Uri? UriProperty { get; set; }
 	}
@@ -225,7 +225,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- ACT -------------------------------------------------------------
 		ArgumentException ex = Assert.Throws<ArgumentException>(
-			autoProps.GenerateClassInstance<TestClassWithIncorperativeTypes>);
+			autoProps.GenerateClassInstance<TestClassWithUncooperativeTypes>);
 
 		//--- Assert ----------------------------------------------------------
 		Assert.NotNull(ex);
