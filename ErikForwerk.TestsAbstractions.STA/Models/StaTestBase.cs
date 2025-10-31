@@ -33,7 +33,7 @@ public abstract class StaTestBase : TestBase
 			{
 				action();
 			}
-			//--- Intentional: capture for cross-thread re-throwm ---
+			//--- Intentional: capture for cross-thread re-throw ---
 			catch (Exception ex)
 			{
 				exception = ex;
