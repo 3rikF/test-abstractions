@@ -31,6 +31,7 @@ public abstract class StaTestBase : TestBase
 			{
 				action();
 			}
+			//--- Intentional: capture for cross-thread re-throwm ---
 			catch (Exception ex)
 			{
 				exception = ex;
@@ -56,6 +57,7 @@ public abstract class StaTestBase : TestBase
 			{
 				result = action();
 			}
+			//--- Intentional: capture for cross-thread re-throw ---
 			catch (Exception ex)
 			{
 				exception = ex;
