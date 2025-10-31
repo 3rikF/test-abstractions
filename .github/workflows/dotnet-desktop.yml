@@ -109,7 +109,7 @@ jobs:
       id: version
       shell: bash # Explicitly use Bash
       run: |
-        # The Bash-logic for determien the new version
+        # The Bash-logic for determine the new version
         # ------------------------------------
 
         # 1. fetch tags
