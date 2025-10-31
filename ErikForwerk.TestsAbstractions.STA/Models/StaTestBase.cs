@@ -1,9 +1,11 @@
 ﻿
+using ErikForwerk.TestAbstractions.Models;
+
 using Xunit;
 using Xunit.Abstractions;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-namespace ErikForwerk.TestAbstractions.Models;
+namespace ErikForwerk.TestAbstractions.STA.Models;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 public abstract class StaTestBase : TestBase
