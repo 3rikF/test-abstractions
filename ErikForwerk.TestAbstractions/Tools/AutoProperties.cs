@@ -79,13 +79,13 @@ public sealed class AutoProperties(Random? rand = null)
 	public void SetProperties<T>(T target, params string[] exceptProperties)
 	{
 		PropertyInfo[] properties				= typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-		HashSet<string> expludedPropertyNames	= [.. exceptProperties];
+		HashSet<string> excludedPropertyNames	= [.. exceptProperties];
 
 		foreach (PropertyInfo prop in properties)
 		{
 			Type propertyType = prop.PropertyType;
 
-			if (expludedPropertyNames.Contains(prop.Name) || !prop.CanWrite)
+			if (excludedPropertyNames.Contains(prop.Name) || !prop.CanWrite)
 				continue;
 
 			//--- check for nullable ------------------------------------------
