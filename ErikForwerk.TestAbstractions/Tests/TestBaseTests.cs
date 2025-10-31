@@ -1,6 +1,7 @@
 ﻿
 using ErikForwerk.TestAbstractions.Models;
 
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 

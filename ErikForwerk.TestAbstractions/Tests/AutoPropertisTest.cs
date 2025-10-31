@@ -1,7 +1,10 @@
 ﻿
+using System.Diagnostics.CodeAnalysis;
+
 using ErikForwerk.TestAbstractions.Models;
 using ErikForwerk.TestAbstractions.Tools;
 
+using Xunit;
 using Xunit.Abstractions;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -23,6 +26,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		Five,
 	}
 
+	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
 	private class TestClassFlat
 	{
 		public ulong ULongProperty{ get; set; }
@@ -73,6 +77,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		public DateTimeOffset DateTimeOffset2 { get; set; }
 	}
 
+	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
 	private sealed class TestClassTree : TestClassFlat
 	{
 		public TestClassFlat? ChildObject { get; set; }
@@ -88,6 +93,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 	}
 
+	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
 	private sealed class TestClassWithUnsupportedTypes
 	{
 		public Guid? GuidProperty { get; set; }
@@ -96,6 +102,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		public TimeOnly? TimeOnlyProperty { get; set; }
 	}
 
+	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
 	private sealed class TestClassWithIncorperativeTypes
 	{
 		public Uri? UriProperty { get; set; }

@@ -1,5 +1,6 @@
 ﻿
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 using Xunit;
 using Xunit.Abstractions;
@@ -23,10 +24,13 @@ public abstract class TestBase(ITestOutputHelper output)
 	#region Properties
 
 	protected ITestOutputHelper TestConsole
-	{ get; } = output;
+		{ get; } = output;
 
-	protected TestLogger TestLogger
-	{ get; } = new TestLogger();
+	protected TestLogger GetTestLogger()
+		=> new ();
+
+	protected TestLoggerGeneric<T> GetTestLogger<T>()
+		=> new ();
 
 	#endregion Properties
 

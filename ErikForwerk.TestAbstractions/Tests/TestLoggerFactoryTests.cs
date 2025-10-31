@@ -3,6 +3,8 @@ using ErikForwerk.TestAbstractions.Models;
 
 using Microsoft.Extensions.Logging;
 
+using Xunit;
+
 namespace ErikForwerk.TestAbstractions.Tests;
 
 public sealed class TestLoggerFactoryTests
