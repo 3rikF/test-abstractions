@@ -18,9 +18,9 @@ public static class TestStringExtensions
 		else
 			//--- https://www.compart.com/en/unicode/block/U+2400 ---
 			return text
+				.Replace("\r\n", "\\r\\n")	//⏎ ␍␊
 				.Replace("\r", "\\r")		//← ␍
 				.Replace("\n", "\\n")		//↓ ␊
-				.Replace("\r\n", "\\r\\n")	//⏎ ␍␊
 				.Replace("\t", "\\t");
 	}
 }
