@@ -138,12 +138,12 @@ public sealed class AutoProperties(Random? rand = null)
 
 	public Array GenerateArray(Type elementType, int minLength, int maxLength)
 	{
+		ArgumentException.ThrowIfNullOrEmpty(nameof(elementType));
 		ArgumentOutOfRangeException.ThrowIfNegative(minLength);
 		ArgumentOutOfRangeException.ThrowIfNegative(maxLength);
 		ArgumentOutOfRangeException.ThrowIfNegative(maxLength-minLength);
 
 		int length		= _rand.Next(minLength, maxLength);
-
 		Array result	= Array.CreateInstance(elementType, length);
 
 		for (int i = 0; i < result.Length; i++)
@@ -155,7 +155,6 @@ public sealed class AutoProperties(Random? rand = null)
 	private object GenerateSingleValue(Type elementType)
 		=> elementType switch
 	{
-
 		Type t when t == typeof(string)			=> GenerateString(),
 
 		Type t when t == typeof(float)			=> (float)_rand.NextDouble(),
