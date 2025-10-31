@@ -1,5 +1,13 @@
 name: .NET Core Desktop
 
+#------------------------------------------------------------------------------------------------------------------------------------------
+env:
+  # Replace with your solution name, i.e. MyWpfApp.sln.
+  SOLUTION_NAME: "./ErikForwerk.TestAbstractions.slnx"
+  PROJECT_BASE: "./ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj"
+  PROJECT_STA: "./ErikForwerk.TestsAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj"
+
+#------------------------------------------------------------------------------------------------------------------------------------------
 on:
   push:
     branches: [ "main" ]
@@ -17,25 +25,17 @@ on:
           - minor
           - patch
 
-  #----------------------------------------------------------------------------------------------------------------------------------------
-env:
-  # Replace with your solution name, i.e. MyWpfApp.sln.
-  SOLUTION_NAME: "./ErikForwerk.TestAbstractions.slnx"
-  PROJECT_BASE: "./ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj"
-  PROJECT_STA: "./ErikForwerk.TestsAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj"
 
+#------------------------------------------------------------------------------------------------------------------------------------------
 jobs:
-
-  #----------------------------------------------------------------------------------------------------------------------------------------
   build:
+    # For a list of available runner types, refer to
+    # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: windows-latest
 
     strategy:
       matrix:
         CONFIGURATION: [Debug, Release]
-
-    # For a list of available runner types, refer to
-    # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
-    runs-on: windows-latest
 
     permissions:
       contents: read  # Required to checkout code
@@ -158,7 +158,7 @@ jobs:
         echo "Previous version: $latestTag"
         echo "New version: $newTag"
 
-        # 7. Output as environment variable for following steps
+        # 7. Output as environment variable for following steps
         echo "version=$newVersion" >> $GITHUB_OUTPUT
         echo "tag=$newTag" >> $GITHUB_OUTPUT
 
