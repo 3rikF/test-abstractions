@@ -66,6 +66,8 @@ public sealed class AutoProperties(Random? rand = null)
 
 	public object GenerateClassInstance(Type type)
 	{
+		ArgumentNullException.ThrowIfNull(type);
+
 		//--- check if the type is a class and has a parameterless constructor ---
 		if (!type.IsClass || type.GetConstructor(Type.EmptyTypes) is null)
 			throw new ArgumentException($"Type [{type.Name}] must be a class with a parameterless constructor.", nameof(type));
@@ -78,6 +80,8 @@ public sealed class AutoProperties(Random? rand = null)
 
 	public void SetProperties<T>(T target, params string[] exceptProperties)
 	{
+		ArgumentNullException.ThrowIfNull(target);
+
 		PropertyInfo[] properties				= typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 		HashSet<string> excludedPropertyNames	= [.. exceptProperties];
 

@@ -3,6 +3,7 @@ using System.Reflection;
 
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 namespace ErikForwerk.TestAbstractions.Tools;
@@ -11,9 +12,12 @@ namespace ErikForwerk.TestAbstractions.Tools;
 public static class CompareHelper
 {
 	//-----------------------------------------------------------------------------------------------------------------
+	private delegate void PropertyAssertDelegate(string indention, string propertyName, object? expectedValue, object? actualValue);
+
+	//-----------------------------------------------------------------------------------------------------------------
 	#region Helper Methods
 
-	private static void AssertProperties<T>(T expected, T actual, Action<string, string, object?, object?> assert)
+	private static void AssertProperties<T>(T expected, T actual, PropertyAssertDelegate assertLogic)
 	{
 		//--- tests are pointless if the objects are the same instance --------
 		Assert.False(ReferenceEquals(expected, actual));
@@ -26,29 +30,16 @@ public static class CompareHelper
 			object? expectedValue	= prop.GetValue(expected);
 			object? actualValue		= prop.GetValue(actual);
 
-			assert(string.Empty, prop.Name, expectedValue, actualValue);
-
-			if (expectedValue is null || actualValue is null)
-				continue;
-
 			//--- if its an IEnumerable, compare the elements ------------------
-			else if (expectedValue is IEnumerable<object?> expectedEnumeration && actualValue is IEnumerable<object?> actualEnumeration)
-			{
-				IEnumerator<object?> expectedBlah	= expectedEnumeration.GetEnumerator();
-				IEnumerator<object?> actualBlubb	= actualEnumeration.GetEnumerator();
-
-				//--- no recursion, just one level arrays ---
-				while (expectedBlah.MoveNext() && actualBlubb.MoveNext())
-					assert("\t", $"{prop.Name}", expectedBlah.Current, actualBlubb.Current);
-			}
+			if (expectedValue is IEnumerable<object?> expectedEnumeration && actualValue is IEnumerable<object?> actualEnumeration)
+				assertLogic(string.Empty, prop.Name, expectedEnumeration, actualEnumeration);
 
 			//--- if its an array, compare the elements -----------------------
 			else if (prop.PropertyType.IsArray && expectedValue is Array expectedArray && actualValue is Array actualArray)
-			{
-				//--- no recursion, just one level arrays ---
-				for (int i = 0; i < expectedArray.Length; i++)
-					assert("\t", $"{prop.Name}[{i}]", expectedArray.GetValue(i), actualArray.GetValue(i));
-			}
+				assertLogic(string.Empty, prop.Name, expectedArray, actualArray);
+
+			else
+				assertLogic(string.Empty, prop.Name, expectedValue, actualValue);
 		}
 	}
 
