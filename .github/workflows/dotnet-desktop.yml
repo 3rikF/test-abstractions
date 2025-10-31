@@ -198,7 +198,7 @@ jobs:
         NUPKG_PATH_BASE="./nupkg/${PACKAGE_NAME_BASE}.${PACKAGE_VERSION}.nupkg"
         NUPKG_PATH_STA="./nupkg/${PACKAGE_NAME_STA}.${PACKAGE_VERSION}.nupkg"
 
-        # Setzt den exakten Pfad als Output
+        # Sets the exact path as output
         echo "nupkg_path_base=$NUPKG_PATH_BASE" >> $GITHUB_OUTPUT
         echo "nupkg_path_sta=$NUPKG_PATH_STA" >> $GITHUB_OUTPUT
 
