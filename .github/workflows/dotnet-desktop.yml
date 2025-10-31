@@ -191,7 +191,7 @@ jobs:
         dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION --output ./nupkg /p:EnableWindowsTargeting=true
         dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION --output ./nupkg /p:EnableWindowsTargeting=true
 
-        # Den exakten Paketnamen für den push-Schritt ermitteln und speichern (Fail-Safe)
+        # Determine and save the exact package name for the push step (Fail-Safe)
         PACKAGE_NAME_BASE=$(basename $PROJECT_BASE .csproj | sed 's/\.csproj$//')
         PACKAGE_NAME_STA=$(basename $PROJECT_STA .csproj | sed 's/\.csproj$//')
         
