@@ -108,7 +108,7 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 
 	/// <summary>
 	/// Ensures that <see cref="TestBase.FailTest"/> fails as expected.
-	/// Also covers this code-path for all other test methods, who use (bet never actually call) <see cref="TestBase.FailTest"/>.
+	/// Also covers this code-path for all other test methods, who use (but never actually call) <see cref="TestBase.FailTest"/>.
 	/// </summary>
 	[Fact]
 	public void Test_FailTest_Parameterless()
