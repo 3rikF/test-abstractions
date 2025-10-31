@@ -107,7 +107,7 @@ jobs:
     # Determine the latest version tag and calculate new version
     - name: Determine new version
       id: version
-      shell: bash # Explizit Bash verwenden
+      shell: bash # Explicitly use Bash
       run: |
         # The Bash-logic for determien the new version
         # ------------------------------------
