@@ -346,8 +346,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		if (exceptionExpected)
 		{
 			Assert.NotNull(ex);
-			Assert.Null(result)
-				;
+			Assert.Null(result);
 			_ = Assert.IsType<ArgumentOutOfRangeException>(ex);
 			TestConsole.WriteLine($"[✔️ PASSED] Correctly threw ArgumentOutOfRangeException");
 		}
