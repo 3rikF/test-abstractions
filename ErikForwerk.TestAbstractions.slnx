@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj" />
+  <Project Path="ErikForwerk.TestsAbstractions.STA.Tests/ErikForwerk.TestAbstractions.STA.Tests.csproj" Id="2352492b-0d9a-4531-afe8-759ca4bb9d95" />
+  <Project Path="ErikForwerk.TestsAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj" Id="2b2e3d1e-97eb-4bcf-9808-d8c96b6b4f9c" />
+  <Project Path="ErikForwerk.TestsAbstractions.Tests/ErikForwerk.TestAbstractions.Tests.csproj" Id="bcda7432-4d90-4950-9529-46468940bcd5" />
+</Solution>
