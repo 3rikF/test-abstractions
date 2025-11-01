@@ -5,7 +5,7 @@ env:
   # Replace with your solution name, i.e. MyWpfApp.sln.
   SOLUTION_NAME: "./ErikForwerk.TestAbstractions.slnx"
   PROJECT_BASE: "./ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj"
-  PROJECT_STA: "./ErikForwerk.TestsAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj"
+  PROJECT_STA: "./ErikForwerk.TestAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj"
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 on:
