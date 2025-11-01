@@ -4,6 +4,20 @@
 		<TargetFramework>net9.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<Title>Test Abstractions STA</Title>
+		<IsPackable>true</IsPackable>
+		<OutputType>Library</OutputType>
+
+		<!-- NuGet Package Metadata -->
+		<PackageId>ErikForwerk.TestAbstractions.STA</PackageId>
+		<Authors>Erik Forwerk</Authors>
+		<Description>Test abstractions and helpers for unit testing with xUnit in STA (Single-Threaded Apartment) mode for Windows</Description>
+		<PackageTags>testing;xunit;abstractions;unittest;sta;windows</PackageTags>
+		<RepositoryUrl>https://github.com/3rikF/test-abstractions</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Copyright>© 2025 Erik Forwerk</Copyright>
+		<PackageReadmeFile>..\README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>

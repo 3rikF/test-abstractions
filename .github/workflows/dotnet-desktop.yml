@@ -25,7 +25,6 @@ on:
           - minor
           - patch
 
-
 #------------------------------------------------------------------------------------------------------------------------------------------
 jobs:
   build:
@@ -164,7 +163,7 @@ jobs:
 
     # Create and push new version tag
     - name: Create version tag
-      shell: bash
+      #shell: bash
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -173,10 +172,8 @@ jobs:
 
     # Build the solution with new version
     - name: Build solution
-      shell: bash
-      # use environment variable in Bash like: $PROJECT_PATH (without "env:")
       # since this is a new step, we have to rebuild everything
-      # ansd since we build windows-target under linux, we need to add "/p:EnableWindowsTargeting=true"
+      # and since we build windows-target under linux, we need to add "/p:EnableWindowsTargeting=true"
       run: |
         dotnet build $PROJECT_BASE --configuration Release /p:Version=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true
         dotnet build $PROJECT_STA --configuration Release /p:Version=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true
@@ -184,30 +181,13 @@ jobs:
     # Pack the NuGet package
     - name: Pack NuGet package
       id: pack
-      shell: bash
       run: |
-        PACKAGE_VERSION="${{ steps.version.outputs.version }}"
-        # The dotnet pack command
-        dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION --output ./nupkg /p:EnableWindowsTargeting=true
-        dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION --output ./nupkg /p:EnableWindowsTargeting=true
+        dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true -o ./artifacts
+        dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true -o ./artifacts
 
-        # Determine and save the exact package name for the push step (Fail-Safe)
-        PACKAGE_NAME_BASE=$(basename $PROJECT_BASE .csproj | sed 's/\.csproj$//')
-        PACKAGE_NAME_STA=$(basename $PROJECT_STA .csproj | sed 's/\.csproj$//')
-        
-        NUPKG_PATH_BASE="./nupkg/${PACKAGE_NAME_BASE}.${PACKAGE_VERSION}.nupkg"
-        NUPKG_PATH_STA="./nupkg/${PACKAGE_NAME_STA}.${PACKAGE_VERSION}.nupkg"
-
-        # Sets the exact path as output
-        echo "nupkg_path_base=$NUPKG_PATH_BASE" >> $GITHUB_OUTPUT
-        echo "nupkg_path_sta=$NUPKG_PATH_STA" >> $GITHUB_OUTPUT
 
     # Publish to NuGet.org
     - name: Publish to NuGet
       shell: bash
-      run: |
-        dotnet nuget push ${{ steps.pack.outputs.nupkg_path_base }} --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-        dotnet nuget push ${{ steps.pack.outputs.nupkg_path_sta }} --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-      # TODO: try the following syntax:
-      # dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-        
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
