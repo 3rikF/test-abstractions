@@ -1,4 +1,4 @@
 <Solution>
   <Project Path="ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj" />
-  <Project Path="ErikForwerk.TestsAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj" Id="2b2e3d1e-97eb-4bcf-9808-d8c96b6b4f9c" />
+  <Project Path="ErikForwerk.TestAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj" Id="2b2e3d1e-97eb-4bcf-9808-d8c96b6b4f9c" />
 </Solution>
