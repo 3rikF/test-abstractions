@@ -8,12 +8,8 @@ using Xunit.Abstractions;
 namespace ErikForwerk.TestAbstractions.STA.Models;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-public abstract class StaTestBase : TestBase
+public abstract class StaTestBase(ITestOutputHelper output) : TestBase(output)
 {
-	protected StaTestBase(ITestOutputHelper output) : base(output)
-	{
-	}
-
 	//-----------------------------------------------------------------------------------------------------------------
 	#region STA Threading Support
 
@@ -23,7 +19,7 @@ public abstract class StaTestBase : TestBase
 	public sealed class STAFactAttribute : FactAttribute
 	{ }
 
-	protected static void RunOnSTAThread(Action action)
+	protected static void RunOnSTAThread(Action action, Action? @finally=null)
 	{
 		Exception? exception = null;
 
@@ -38,6 +34,10 @@ public abstract class StaTestBase : TestBase
 			{
 				exception = ex;
 			}
+			finally
+			{
+				@finally?.Invoke();
+			}
 		});
 
 		thread.SetApartmentState(ApartmentState.STA);
@@ -48,7 +48,7 @@ public abstract class StaTestBase : TestBase
 			throw exception;
 	}
 
-	protected static TReturn? RunOnSTAThread<TReturn>(Func<TReturn> action)
+	protected static TReturn? RunOnSTAThread<TReturn>(Func<TReturn> action, Action<TReturn?>? @finally=null)
 	{
 		TReturn? result			= default;
 		Exception? exception	= null;
@@ -63,6 +63,10 @@ public abstract class StaTestBase : TestBase
 			catch (Exception ex)
 			{
 				exception = ex;
+			}
+			finally
+			{
+				@finally?.Invoke(result);
 			}
 		});
 
