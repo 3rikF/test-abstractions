@@ -4,6 +4,18 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<Title>Test Abstractions</Title>
+		<IsPackable>true</IsPackable>
+		<OutputType>Library</OutputType>
+
+		<!-- NuGet Package Metadata -->
+		<PackageId>ErikForwerk.TestAbstractions</PackageId>
+		<Authors>Erik Forwerk</Authors>
+		<Description>Test abstractions and helpers for unit testing with xUnit</Description>
+		<PackageTags>testing;xunit;abstractions;unittest</PackageTags>
+		<RepositoryUrl>https://github.com/3rikF/test-abstractions</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<ItemGroup>
