@@ -41,7 +41,7 @@ public sealed class StaTestBaseTests(ITestOutputHelper toh) : StaTestBase(toh)
 	{
 		//--- ACT -------------------------------------------------------------
 		Exception ex = Assert.Throws<Exception>(
-			() => RunOnSTAThread<object>([DoesNotReturn]() => throw new Exception("Test exception") ));
+			() => RunOnSTAThread<object>(() => throw new Exception("Test exception") ));
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal("Test exception", ex.Message);

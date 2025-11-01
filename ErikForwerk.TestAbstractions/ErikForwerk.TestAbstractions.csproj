@@ -16,6 +16,8 @@
 		<RepositoryUrl>https://github.com/3rikF/test-abstractions</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Copyright>© 2025 Erik Forwerk</Copyright>
+		<PackageReadmeFile>..\README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
