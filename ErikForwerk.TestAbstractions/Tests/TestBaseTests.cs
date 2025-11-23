@@ -17,9 +17,9 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	#region Test Helper Methods
 
 	[Theory]
-	[InlineData(null,		 "<null>")]
+	[InlineData(null,		"<null>")]
 	[InlineData("",			"<empty>")]
-	[InlineData("  ",		"[  ]")]
+	[InlineData("  ",		"<whitespace>")]
 	[InlineData("foobar",	"[foobar]")]
 	[InlineData(123,		"[123]")]
 	public void Test_B(object? input, string expectedOutput)
