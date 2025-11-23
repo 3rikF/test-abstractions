@@ -15,8 +15,9 @@ public abstract class TestBase(ITestOutputHelper output)
 	//-----------------------------------------------------------------------------------------------------------------
 	#region Fields
 
-	protected internal const string NULL_STRING = "<null>";
-	protected internal const string EMPTY_STRING = "<empty>";
+	protected internal const string NULL_STRING			= "<null>";
+	protected internal const string EMPTY_STRING		= "<empty>";
+	protected internal const string WHITESPACE_STRING	= "<whitespace>";
 
 	#endregion Fields
 
@@ -62,6 +63,9 @@ public abstract class TestBase(ITestOutputHelper output)
 
 		else if (s.Length == 0)
 			return EMPTY_STRING;
+
+		else if (string.IsNullOrWhiteSpace(s))
+			return WHITESPACE_STRING;
 
 		else
 			return string.Concat('[', s.Trim('[', ']'), ']');
