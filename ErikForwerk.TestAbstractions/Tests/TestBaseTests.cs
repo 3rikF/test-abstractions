@@ -117,7 +117,6 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 		const string EXPECTED_MESSAGE = "This method should not have been executed.";
 
 		//--- ACT -------------------------------------------------------------
-
 		FailException ex = Assert.Throws<FailException>(FailTest);
 
 		//--- ASSERT ----------------------------------------------------------

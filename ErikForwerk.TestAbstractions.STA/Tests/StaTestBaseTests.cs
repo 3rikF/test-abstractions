@@ -1,6 +1,4 @@
 ﻿
-using System.Diagnostics.CodeAnalysis;
-
 using ErikForwerk.TestAbstractions.STA.Models;
 
 using Xunit;
@@ -27,13 +25,13 @@ public sealed class StaTestBaseTests(ITestOutputHelper toh) : StaTestBase(toh)
 	public void RunOnSTAThread_Action_ThrowsNoOwnException()
 	{
 		//---ARRANGE ----------------------------------------------------------
-		bool didInFactExecutedTheDelegateAndNotJustSilentlyDoNothingLikeIgnoringTheActionWithoutSombodyEverNoticingAndThatsWhatThisVariableIsFor = false;
+		bool didInFactExecutedTheDelegateAndNotJustSilentlyDidNothingLikeIgnoringTheActionWithoutSombodyEverNoticingAndThatsWhatThisVariableIsFor = false;
 
 		//--- ACT -------------------------------------------------------------
-		RunOnSTAThread(() => { didInFactExecutedTheDelegateAndNotJustSilentlyDoNothingLikeIgnoringTheActionWithoutSombodyEverNoticingAndThatsWhatThisVariableIsFor = true; });
+		RunOnSTAThread(() => { didInFactExecutedTheDelegateAndNotJustSilentlyDidNothingLikeIgnoringTheActionWithoutSombodyEverNoticingAndThatsWhatThisVariableIsFor = true; });
 
 		//--- ASSERT ----------------------------------------------------------
-		Assert.True(didInFactExecutedTheDelegateAndNotJustSilentlyDoNothingLikeIgnoringTheActionWithoutSombodyEverNoticingAndThatsWhatThisVariableIsFor);
+		Assert.True(didInFactExecutedTheDelegateAndNotJustSilentlyDidNothingLikeIgnoringTheActionWithoutSombodyEverNoticingAndThatsWhatThisVariableIsFor);
 	}
 
 	[Fact]

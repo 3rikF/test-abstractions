@@ -228,12 +228,11 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		AutoProperties uut = new ();
 
 		//--- ACT -------------------------------------------------------------
-		Exception ex = Record.Exception(
+		ArgumentException ex = Assert.ThrowsAny<ArgumentException>(
 			() => uut.GenerateClassInstance(invalidType!));
 
 		//--- Assert ----------------------------------------------------------
 		Assert.NotNull(ex);
-		_ = Assert.IsType<ArgumentException>(ex, false);
 	}
 
 	#endregion GenerateClassInstance
