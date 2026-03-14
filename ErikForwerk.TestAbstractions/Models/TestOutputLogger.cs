@@ -12,11 +12,11 @@ public sealed class TestOutputLogger(ITestOutputHelper testOutputHelper) : ILogg
 	//-----------------------------------------------------------------------------------------------------------------
 	#region Nested Type
 
-	private class IndentionScope : IDisposable
+	private class IndentationScope : IDisposable
 	{
 		private readonly TestOutputLogger _logger;
 
-		public IndentionScope(TestOutputLogger logger)
+		public IndentationScope(TestOutputLogger logger)
 		{
 			_logger = logger;
 			_logger._indentation += "  ";
@@ -40,7 +40,7 @@ public sealed class TestOutputLogger(ITestOutputHelper testOutputHelper) : ILogg
 	#region Methods
 
 	public IDisposable? BeginScope<TState>(TState state) where TState : notnull
-		=> new IndentionScope(this);
+		=> new IndentationScope(this);
 
 	public bool IsEnabled(LogLevel logLevel)
 		=> true;

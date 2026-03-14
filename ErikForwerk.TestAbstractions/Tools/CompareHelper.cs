@@ -12,7 +12,7 @@ namespace ErikForwerk.TestAbstractions.Tools;
 public static class CompareHelper
 {
 	//-----------------------------------------------------------------------------------------------------------------
-	private delegate void PropertyAssertDelegate(string indention, string propertyName, object? expectedValue, object? actualValue);
+	private delegate void PropertyAssertDelegate(string indentation, string propertyName, object? expectedValue, object? actualValue);
 
 	//-----------------------------------------------------------------------------------------------------------------
 	#region Helper Methods
@@ -48,11 +48,11 @@ public static class CompareHelper
 		AssertProperties(
 			expected
 			, actual
-			, (indention, propertyName, a, b) =>
+			, (indentation, propertyName, a, b) =>
 			{
-				testOutput.WriteLine($"{indention}[{propertyName}]");
+				testOutput.WriteLine($"{indentation}[{propertyName}]");
 				Assert.Equal(a, b);
-				testOutput.WriteLine($"{indention}[👍 '{a}' == '{b}']");
+				testOutput.WriteLine($"{indentation}[👍 '{a}' == '{b}']");
 				testOutput.WriteLine(string.Empty);
 			});
 	}
@@ -62,11 +62,11 @@ public static class CompareHelper
 		AssertProperties(
 			expected
 			, actual
-			, (indention, propertyName, a, b) =>
+			, (indentation, propertyName, a, b) =>
 			{
-				testOutput.WriteLine($"{indention}[{propertyName}]");
+				testOutput.WriteLine($"{indentation}[{propertyName}]");
 				Assert.NotEqual(a, b);
-				testOutput.WriteLine($"{indention}[👍 '{a}' != '{b}']");
+				testOutput.WriteLine($"{indentation}[👍 '{a}' != '{b}']");
 				testOutput.WriteLine(string.Empty);
 			});
 	}
