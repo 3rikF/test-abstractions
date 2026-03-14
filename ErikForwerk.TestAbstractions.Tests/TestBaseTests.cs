@@ -3,7 +3,6 @@ using ErikForwerk.TestAbstractions.Models;
 
 using Microsoft.Extensions.Logging;
 
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -17,11 +16,11 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	#region Test Helper Methods
 
 	[Theory]
-	[InlineData(null,		"<null>")]
-	[InlineData("",			"<empty>")]
-	[InlineData("  ",		"<whitespace>")]
-	[InlineData("foobar",	"[foobar]")]
-	[InlineData(123,		"[123]")]
+	[InlineData(null, "<null>")]
+	[InlineData("", "<empty>")]
+	[InlineData("  ", "<whitespace>")]
+	[InlineData("foobar", "[foobar]")]
+	[InlineData(123, "[123]")]
 	public void Test_B(object? input, string expectedOutput)
 	{
 		//--- ARRANGE ---------------------------------------------------------
@@ -77,7 +76,7 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(logger);
-		_ = Assert.IsType<ILogger>(logger, false);
+		_ = Assert.IsAssignableFrom<ILogger>(logger);
 		Assert.Empty(logger.LogMessages);
 		Assert.True(logger.IsEnabled(LogLevel.Information));
 	}
@@ -93,8 +92,8 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(logger);
-		_ = Assert.IsType<ILogger<TestBaseTests>>(logger, false);
-		_ = Assert.IsType<TestLogger>(logger, false);
+		_ = Assert.IsAssignableFrom<ILogger<TestBaseTests>>(logger);
+		_ = Assert.IsAssignableFrom<TestLogger>(logger);
 
 		Assert.Empty(logger.LogMessages);
 		Assert.Empty(logger.LogMessages);
@@ -131,8 +130,8 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	public void Test_FailTest_OneParam()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param=foobar]";
-		const string TEST_PARAM			= "foobar";
+		const string EXPECTED_MESSAGE = "This method should not have been executed. [param=foobar]";
+		const string TEST_PARAM = "foobar";
 
 		//--- ACT -------------------------------------------------------------
 		FailException ex = Assert.Throws<FailException>(
@@ -150,9 +149,9 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	public void Test_FailTest_TwoParams()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param1=foobar], [param2=69]";
-		const string TEST_PARAM1		= "foobar";
-		const int TEST_PARAM2			= 69;
+		const string EXPECTED_MESSAGE = "This method should not have been executed. [param1=foobar], [param2=69]";
+		const string TEST_PARAM1 = "foobar";
+		const int TEST_PARAM2 = 69;
 
 		//--- ACT -------------------------------------------------------------
 		FailException ex = Assert.Throws<FailException>(
@@ -175,7 +174,7 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	public void Test_FailTest_WithReturnOnly()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE	= "This method should not have been executed. [no parameters]";
+		const string EXPECTED_MESSAGE = "This method should not have been executed. [no parameters]";
 
 		//--- ACT -------------------------------------------------------------
 		FailException ex = Assert.Throws<FailException>(
@@ -193,8 +192,8 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	public void Test_FailTest_WithReturn_OneParam()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param=foobar]";
-		const string TEST_PARAM			= "foobar";
+		const string EXPECTED_MESSAGE = "This method should not have been executed. [param=foobar]";
+		const string TEST_PARAM = "foobar";
 
 		//--- ACT -------------------------------------------------------------
 		FailException ex = Assert.Throws<FailException>(

@@ -27,9 +27,11 @@ public abstract class TestBase(ITestOutputHelper output)
 	protected ITestOutputHelper TestConsole
 		{ get; } = output;
 
+	[SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "I don't want to")]
 	protected TestLogger GetTestLogger()
 		=> new ();
 
+	[SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "I don't want to")]
 	protected TestLoggerGeneric<T> GetTestLogger<T>()
 		=> new ();
 

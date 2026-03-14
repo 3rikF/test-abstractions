@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿
+using System.Diagnostics.CodeAnalysis;
 
 using ErikForwerk.TestAbstractions.Models;
 using ErikForwerk.TestAbstractions.Tools;
 
-using Xunit;
 using Xunit.Abstractions;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -29,16 +29,16 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
 	private class TestClassFlat
 	{
-		public ulong ULongProperty{ get; set; }
+		public ulong ULongProperty { get; set; }
 		public long LongProperty { get; set; }
 
-		public uint UIntProperty{ get; set; }
+		public uint UIntProperty { get; set; }
 		public int IntProperty { get; set; }
 
-		public ushort UShortProperty{ get; set; }
+		public ushort UShortProperty { get; set; }
 		public short ShortProperty { get; set; }
 
-		public byte UByteProperty{ get; set; }
+		public byte UByteProperty { get; set; }
 		public sbyte ByteProperty { get; set; }
 
 		public float FloatProperty { get; set; }
@@ -83,10 +83,10 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	{
 		public TestClassFlat? ChildObject { get; set; }
 
-		public object? Object1 {get; set;}
-		public object Object2 {get; set;} = new object();
+		public object? Object1 { get; set; }
+		public object Object2 { get; set; } = new object();
 
-		public object []? ObjectArray1 { get; set; }
+		public object[]? ObjectArray1 { get; set; }
 		public object[] ObjectArray2 { get; set; } = [];
 
 		public List<object>? ObjectList1 { get; set; }
@@ -125,7 +125,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateClassInstance_PlainClass_Simple()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties uut = new (new Random());
+		AutoProperties uut = new(new Random());
 
 		//--- ACT -------------------------------------------------------------
 		TestClassFlat result = uut.GenerateClassInstance<TestClassFlat>();
@@ -139,7 +139,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GetTestInstance_ObjectTree_Simple()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties uut = new (new Random());
+		AutoProperties uut = new(new Random());
 
 		//--- ACT -------------------------------------------------------------
 		TestClassTree result = uut.GenerateClassInstance<TestClassTree>();
@@ -153,8 +153,8 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateClassInstance_Repeatability_DifferentInstances()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties uutA = new ();
-		AutoProperties uutB = new ();
+		AutoProperties uutA = new();
+		AutoProperties uutB = new();
 
 		//--- ACT -------------------------------------------------------------
 		TestClassFlat resultA = uutA.GenerateClassInstance<TestClassFlat>();
@@ -172,7 +172,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateClassInstance_Repeatability_SameInstance()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties uut = new ();
+		AutoProperties uut = new();
 
 		//--- ACT -------------------------------------------------------------
 		TestClassFlat resultA = uut.GenerateClassInstance<TestClassFlat>();
@@ -194,7 +194,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateClassInstance_NotSupportedType_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties uut = new ();
+		AutoProperties uut = new();
 
 		//--- ACT -------------------------------------------------------------
 		NotSupportedException ex = Assert.Throws<NotSupportedException>(
@@ -208,7 +208,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateClassInstance_NotSupportedProperties_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties uut = new ();
+		AutoProperties uut = new();
 
 		//--- ACT -------------------------------------------------------------
 		ArgumentException ex = Assert.Throws<ArgumentException>(
@@ -225,7 +225,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateClassInstance_WithInvalidType_ThrowsException(Type? invalidType)
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties uut = new ();
+		AutoProperties uut = new();
 
 		//--- ACT -------------------------------------------------------------
 		ArgumentException ex = Assert.ThrowsAny<ArgumentException>(
@@ -244,7 +244,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void SetProperties_NullTarget_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties uut = new ();
+		AutoProperties uut = new();
 		//--- ACT -------------------------------------------------------------
 		ArgumentNullException ex = Assert.Throws<ArgumentNullException>(
 			() => uut.SetProperties<TestClassFlat>(null!));
@@ -257,21 +257,21 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void SetProperties_ExceptProperties_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		DateTime TEST_DATETIME		= new DateTime(1234, 12, 12, 12, 12, 12);
-		AutoProperties uut			= new ();
-		TestClassFlat testObjectA	= new () { DateTime1 = TEST_DATETIME };
-		TestClassFlat testObjectB	= new () { DateTime1 = TEST_DATETIME };
+		DateTime TEST_DATETIME = new DateTime(1234, 12, 12, 12, 12, 12);
+		AutoProperties uut = new();
+		TestClassFlat testObjectA = new() { DateTime1 = TEST_DATETIME };
+		TestClassFlat testObjectB = new() { DateTime1 = TEST_DATETIME };
 
 		//--- ACT -------------------------------------------------------------
 		uut.ResetRandom();
-		uut.SetProperties(testObjectA);										//--- value should have changed ---
+		uut.SetProperties(testObjectA);                                     //--- value should have changed ---
 
 		uut.ResetRandom();
-		uut.SetProperties(testObjectB, nameof(TestClassFlat.DateTime1));	//--- value should NOT have changed ---
+		uut.SetProperties(testObjectB, nameof(TestClassFlat.DateTime1));    //--- value should NOT have changed ---
 
 		//--- Assert ----------------------------------------------------------
-		Assert.NotEqual(TEST_DATETIME,	testObjectA.DateTime1);
-		Assert.Equal(TEST_DATETIME,		testObjectB.DateTime1);
+		Assert.NotEqual(TEST_DATETIME, testObjectA.DateTime1);
+		Assert.Equal(TEST_DATETIME, testObjectB.DateTime1);
 	}
 
 	#endregion SetProperties
@@ -294,8 +294,8 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void ResetRandom_ResetsAllProperties()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		Random rand			= new (123);
-		AutoProperties uut	= new (rand);
+		Random rand = new(123);
+		AutoProperties uut = new(rand);
 
 		TestClassFlat resultA = uut.GenerateClassInstance<TestClassFlat>();
 
@@ -318,22 +318,22 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	}
 
 	[Theory]
-	[InlineData(0,	-1,	true)]
-	[InlineData(-1,	0,	true)]
-	[InlineData(1,	-1,	true)]
-	[InlineData(-1,	-1,	true)]
-	[InlineData(1,	0,	true)]
-	[InlineData(10,	5,	true)]
+	[InlineData(0, -1, true)]
+	[InlineData(-1, 0, true)]
+	[InlineData(1, -1, true)]
+	[InlineData(-1, -1, true)]
+	[InlineData(1, 0, true)]
+	[InlineData(10, 5, true)]
 
-	[InlineData(0,	0,	false)]
-	[InlineData(0,	1,	false)]
-	[InlineData(1,	2,	false)]
-	[InlineData(3,	3,	false)]
+	[InlineData(0, 0, false)]
+	[InlineData(0, 1, false)]
+	[InlineData(1, 2, false)]
+	[InlineData(3, 3, false)]
 	public void GenerateArray_MinMaxLength(int minLength, int maxLength, bool exceptionExpected)
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		TestConsole.WriteLine($"Testing with minLength=[{minLength}], maxLength=[{maxLength}]");
-		AutoProperties unitUnderTest = new (new Random());
+		AutoProperties unitUnderTest = new(new Random());
 
 		int[]? result = null;
 
@@ -366,7 +366,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateArray_SingleLength(int length)
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties unitUnderTest = new (new Random());
+		AutoProperties unitUnderTest = new(new Random());
 
 		//--- ACT -------------------------------------------------------------
 		int[] result = unitUnderTest.GenerateArray<int>(length);
@@ -382,14 +382,14 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		const int NUM_ELEMENTS = 3;
-		AutoProperties unitUnderTest = new (new Random());
+		AutoProperties unitUnderTest = new(new Random());
 
 		//--- ACT -------------------------------------------------------------
-		int[] intArray				= unitUnderTest.GenerateArray<int>(NUM_ELEMENTS);
-		string[] strings			= unitUnderTest.GenerateArray<string>(NUM_ELEMENTS);
-		TestClassFlat[] objectsA	= unitUnderTest.GenerateArray<TestClassFlat>(NUM_ELEMENTS);
-		TestClassTree[] objectsB	= unitUnderTest.GenerateArray<TestClassTree>(NUM_ELEMENTS);
-		object[] objectsC			= unitUnderTest.GenerateArray<object>(NUM_ELEMENTS);
+		int[] intArray = unitUnderTest.GenerateArray<int>(NUM_ELEMENTS);
+		string[] strings = unitUnderTest.GenerateArray<string>(NUM_ELEMENTS);
+		TestClassFlat[] objectsA = unitUnderTest.GenerateArray<TestClassFlat>(NUM_ELEMENTS);
+		TestClassTree[] objectsB = unitUnderTest.GenerateArray<TestClassTree>(NUM_ELEMENTS);
+		object[] objectsC = unitUnderTest.GenerateArray<object>(NUM_ELEMENTS);
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(intArray);
@@ -417,7 +417,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateArray_NullType_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties unitUnderTest = new (new Random());
+		AutoProperties unitUnderTest = new(new Random());
 
 		//--- ACT -------------------------------------------------------------
 		ArgumentNullException ex = Assert.Throws<ArgumentNullException>(
@@ -432,7 +432,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GetRandomEnum()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties unitUnderTest = new (new Random());
+		AutoProperties unitUnderTest = new(new Random());
 
 		//--- ACT -------------------------------------------------------------
 		ETestEnum value = unitUnderTest.GetRandomEnum<ETestEnum>();
@@ -445,11 +445,11 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GetRandomEnumExcept()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		AutoProperties unitUnderTest = new (new Random());
+		AutoProperties unitUnderTest = new(new Random());
 
 		//--- ACT -------------------------------------------------------------
-		ETestEnum[] except	= Enum.GetValues<ETestEnum>().Except([ETestEnum.Three]).ToArray();	// except all but one value
-		ETestEnum value		= unitUnderTest.GetRandomEnum(except);
+		ETestEnum[] except = Enum.GetValues<ETestEnum>().Except([ETestEnum.Three]).ToArray();   // except all but one value
+		ETestEnum value = unitUnderTest.GetRandomEnum(except);
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(ETestEnum.Three, value);

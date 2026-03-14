@@ -1,7 +1,6 @@
 ﻿
 using ErikForwerk.TestAbstractions.STA.Models;
 
-using Xunit;
 using Xunit.Abstractions;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -15,7 +14,7 @@ public sealed class StaTestBaseTests(ITestOutputHelper toh) : StaTestBase(toh)
 	{
 		//--- ACT -------------------------------------------------------------
 		Exception ex = Assert.Throws<Exception>(
-			() => RunOnSTAThread(() => throw new Exception("Test exception") ));
+			() => RunOnSTAThread(() => throw new Exception("Test exception")));
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal("Test exception", ex.Message);
@@ -39,7 +38,7 @@ public sealed class StaTestBaseTests(ITestOutputHelper toh) : StaTestBase(toh)
 	{
 		//--- ACT -------------------------------------------------------------
 		Exception ex = Assert.Throws<Exception>(
-			() => RunOnSTAThread<object>(() => throw new Exception("Test exception") ));
+			() => RunOnSTAThread<object>(() => throw new Exception("Test exception")));
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal("Test exception", ex.Message);
