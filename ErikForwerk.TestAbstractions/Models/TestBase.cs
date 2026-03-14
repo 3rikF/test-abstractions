@@ -25,7 +25,7 @@ public abstract class TestBase(ITestOutputHelper output)
 	#region Properties
 
 	protected ITestOutputHelper TestConsole
-		{ get; } = output;
+		{ get; set; } = output;
 
 	[SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "I don't want to")]
 	protected TestLogger GetTestLogger()
@@ -70,7 +70,12 @@ public abstract class TestBase(ITestOutputHelper output)
 			return WHITESPACE_STRING;
 
 		else
-			return string.Concat('[', s.Trim('[', ']'), ']');
+			return string
+				.Concat('[', s.Trim('[', ']'), ']')
+				.Replace("\r\n", "\\r\\n")				//⏎ ␍␊
+				.Replace("\r", "\\r")					//← ␍
+				.Replace("\n", "\\n")					//↓ ␊
+				.Replace("\t", "\\t");
 	}
 
 	#endregion Methods

@@ -136,6 +136,71 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	}
 
 	[Fact]
+	public void GenerateClassInstance_DoesNotReturnDefaultValues()
+	{
+		//--- ARRANGE ---------------------------------------------------------
+		AutoProperties uut = new(new Random());
+
+		//--- ACT -------------------------------------------------------------
+		TestClassFlat result = uut.GenerateClassInstance<TestClassFlat>();
+
+		//--- ASSERT ----------------------------------------------------------
+
+		//--- numeric types ---
+		Assert.NotEqual(default, result.ULongProperty);
+		Assert.NotEqual(default, result.LongProperty);
+		Assert.NotEqual(default, result.UIntProperty);
+		Assert.NotEqual(default, result.IntProperty);
+		Assert.NotEqual(default, result.UShortProperty);
+		Assert.NotEqual(default, result.ShortProperty);
+		Assert.NotEqual(default, result.UByteProperty);
+		Assert.NotEqual(default, result.ByteProperty);
+		Assert.NotEqual(default, result.FloatProperty);
+		Assert.NotEqual(default, result.DoubleProperty);
+		Assert.NotEqual(default, result.DecimalProperty);
+
+		//--- char ---
+		Assert.NotEqual(default, result.CharProperty);
+
+		//--- strings ---
+		Assert.NotNull(result.StringProperty1);
+		Assert.NotEqual(string.Empty, result.StringProperty2);
+
+		//--- bool is intentionally skipped (only 2 values, 50% chance of matching default) ---
+
+		//--- enum (generator excludes default value) ---
+		Assert.NotEqual(default, result.EnumProperty);
+
+		//--- arrays ---
+		Assert.NotNull(result.StringArray1);
+		Assert.NotEmpty(result.StringArray2);
+		Assert.NotNull(result.IntArray1);
+		Assert.NotEmpty(result.IntArray2);
+		Assert.NotEmpty(result.CharArray);
+
+		//--- lists ---
+		Assert.NotNull(result.IntList1);
+		Assert.NotEmpty(result.IntList2);
+
+		//--- enumerables ---
+		Assert.NotNull(result.IntEnumerable1);
+		Assert.NotEmpty(result.IntEnumerable2);
+
+		//--- collections ---
+		Assert.NotNull(result.IntCollection1);
+		Assert.NotEmpty(result.IntCollection2);
+
+		//--- date/time types ---
+		_ = Assert.NotNull(result.DateTime1);
+		Assert.NotEqual(default, result.DateTime2);
+
+		_ = Assert.NotNull(result.DateTimeOffset1);
+		Assert.NotEqual(default, result.DateTimeOffset2);
+
+		TestConsole.WriteLine($"[✔️ PASSED] All properties have non-default values");
+	}
+
+	[Fact]
 	public void GetTestInstance_ObjectTree_Simple()
 	{
 		//--- ARRANGE ---------------------------------------------------------
@@ -194,6 +259,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateClassInstance_NotSupportedType_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
+		const string EXPECTED_MESSAGE_PART = "Type [Guid] is not supported.";
 		AutoProperties uut = new();
 
 		//--- ACT -------------------------------------------------------------
@@ -202,12 +268,16 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- Assert ----------------------------------------------------------
 		Assert.NotNull(ex);
+		Assert.Contains(EXPECTED_MESSAGE_PART, ex.Message);
+
+		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw {nameof(NotSupportedException)} with message containing [{EXPECTED_MESSAGE_PART}]");
 	}
 
 	[Fact]
 	public void GenerateClassInstance_NotSupportedProperties_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
+		const string EXPECTED_MESSAGE_PART = "Type [Uri] must be a class with a parameterless constructor.";
 		AutoProperties uut = new();
 
 		//--- ACT -------------------------------------------------------------
@@ -216,13 +286,14 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- Assert ----------------------------------------------------------
 		Assert.NotNull(ex);
+		Assert.Contains(EXPECTED_MESSAGE_PART, ex.Message);
 	}
 
 	[Theory]
-	[InlineData(null)]
-	[InlineData(typeof(DateTime))] //--- not a class ---
-	[InlineData(typeof(TestClassWithoutDefaultConstructor))] //--- does not have default constructor ---
-	public void GenerateClassInstance_WithInvalidType_ThrowsException(Type? invalidType)
+	[InlineData(null, "Value cannot be null.")]
+	[InlineData(typeof(DateTime), "Type [DateTime] must be a class with a parameterless constructor.")] //--- not a class ---
+	[InlineData(typeof(TestClassWithoutDefaultConstructor), "Type [TestClassWithoutDefaultConstructor] must be a class with a parameterless constructor.")] //--- does not have default constructor ---
+	public void GenerateClassInstance_WithInvalidType_ThrowsException(Type? invalidType, string expectedMessagePart)
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		AutoProperties uut = new();
@@ -233,6 +304,9 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- Assert ----------------------------------------------------------
 		Assert.NotNull(ex);
+		Assert.Contains(expectedMessagePart, ex.Message);
+
+		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw {ex.GetType().Name} with expected message");
 	}
 
 	#endregion GenerateClassInstance
@@ -244,30 +318,33 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void SetProperties_NullTarget_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
+		const string EXPECTED_MESSAGE_PART = "Value cannot be null.";
 		AutoProperties uut = new();
+
 		//--- ACT -------------------------------------------------------------
 		ArgumentNullException ex = Assert.Throws<ArgumentNullException>(
 			() => uut.SetProperties<TestClassFlat>(null!));
 
 		//--- Assert ----------------------------------------------------------
 		Assert.NotNull(ex);
+		Assert.Contains(EXPECTED_MESSAGE_PART, ex.Message);
 	}
 
 	[Fact]
-	public void SetProperties_ExceptProperties_ThrowsException()
+	public void SetProperties_ExceptProperties_DoesNotSetProperties()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		DateTime TEST_DATETIME = new DateTime(1234, 12, 12, 12, 12, 12);
-		AutoProperties uut = new();
-		TestClassFlat testObjectA = new() { DateTime1 = TEST_DATETIME };
-		TestClassFlat testObjectB = new() { DateTime1 = TEST_DATETIME };
+		DateTime TEST_DATETIME		= new(1234, 12, 12, 12, 12, 12);
+		AutoProperties uut			= new();
+		TestClassFlat testObjectA	= new() { DateTime1 = TEST_DATETIME };
+		TestClassFlat testObjectB	= new() { DateTime1 = TEST_DATETIME };
 
 		//--- ACT -------------------------------------------------------------
 		uut.ResetRandom();
-		uut.SetProperties(testObjectA);                                     //--- value should have changed ---
+		uut.SetProperties(testObjectA);										//--- value should have changed ---
 
 		uut.ResetRandom();
-		uut.SetProperties(testObjectB, nameof(TestClassFlat.DateTime1));    //--- value should NOT have changed ---
+		uut.SetProperties(testObjectB, nameof(TestClassFlat.DateTime1));	//--- value should NOT have changed ---
 
 		//--- Assert ----------------------------------------------------------
 		Assert.NotEqual(TEST_DATETIME, testObjectA.DateTime1);
@@ -318,18 +395,11 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	}
 
 	[Theory]
-	[InlineData(0, -1, true)]
-	[InlineData(-1, 0, true)]
-	[InlineData(1, -1, true)]
-	[InlineData(-1, -1, true)]
-	[InlineData(1, 0, true)]
-	[InlineData(10, 5, true)]
-
-	[InlineData(0, 0, false)]
-	[InlineData(0, 1, false)]
-	[InlineData(1, 2, false)]
-	[InlineData(3, 3, false)]
-	public void GenerateArray_MinMaxLength(int minLength, int maxLength, bool exceptionExpected)
+	[InlineData(0, 0)]
+	[InlineData(0, 1)]
+	[InlineData(1, 2)]
+	[InlineData(3, 3)]
+	public void GenerateArray_WithValidValues_GeneratesArray(int minLength, int maxLength)
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		TestConsole.WriteLine($"Testing with minLength=[{minLength}], maxLength=[{maxLength}]");
@@ -342,21 +412,40 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 			() => result = unitUnderTest.GenerateArray<int>(minLength, maxLength));
 
 		//--- ASSERT ----------------------------------------------------------
-		if (exceptionExpected)
-		{
-			Assert.NotNull(ex);
-			Assert.Null(result);
-			_ = Assert.IsType<ArgumentOutOfRangeException>(ex);
-			TestConsole.WriteLine($"[✔️ PASSED] Correctly threw ArgumentOutOfRangeException");
-		}
-		else
-		{
-			Assert.Null(ex);
-			Assert.NotNull(result);
+		Assert.Null(ex);
+		Assert.NotNull(result);
 
-			Assert.InRange(result.Length, minLength, maxLength);
-			TestConsole.WriteLine($"[✔️ PASSED] Successfully generated array with length in range [{minLength}, {maxLength}]");
-		}
+		Assert.InRange(result.Length, minLength, maxLength);
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated array with length in range [{minLength}, {maxLength}]");
+	}
+
+	[Theory]
+	[InlineData(0, -1,	"maxLength ('-1') must be a non-negative value.")]
+	[InlineData(-1, 0,	"minLength ('-1') must be a non-negative value.")]
+	[InlineData(1, -1,	"maxLength ('-1') must be a non-negative value.")]
+	[InlineData(-1, -1,	"minLength ('-1') must be a non-negative value.")]
+	[InlineData(1, 0,	"maxLength-minLength ('-1') must be a non-negative value.")]
+	[InlineData(10, 5,	"maxLength-minLength ('-5') must be a non-negative value.")]
+	public void GenerateArray_VMinMaxLength(int minLength, int maxLength, string expectedMessagePart)
+	{
+		//--- ARRANGE ---------------------------------------------------------
+		TestConsole.WriteLine($"Testing with minLength=[{minLength}], maxLength=[{maxLength}]");
+		AutoProperties unitUnderTest = new(new Random());
+
+		int[]? result = null;
+
+		//--- ACT -------------------------------------------------------------
+		Exception ex = Record.Exception(
+			() => result = unitUnderTest.GenerateArray<int>(minLength, maxLength));
+
+		TestConsole.WriteLine($"[{ex.GetType().Name}] => [{ex.Message}]");
+
+		//--- ASSERT ----------------------------------------------------------
+		Assert.Null(result);
+		ArgumentOutOfRangeException aoorex = Assert.IsType<ArgumentOutOfRangeException>(ex);
+		Assert.Contains(expectedMessagePart, aoorex.Message);
+
+		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw {nameof(ArgumentOutOfRangeException)}]");
 	}
 
 	[Theory]
@@ -417,6 +506,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateArray_NullType_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
+		const string EXPECTED_MESSAGE_PART = "Value cannot be null.";
 		AutoProperties unitUnderTest = new(new Random());
 
 		//--- ACT -------------------------------------------------------------
@@ -425,6 +515,8 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(ex);
+		Assert.Contains(EXPECTED_MESSAGE_PART, ex.Message);
+
 		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw  [{ex.GetType().Name}] for null type");
 	}
 

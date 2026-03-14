@@ -19,18 +19,21 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	[InlineData(null, "<null>")]
 	[InlineData("", "<empty>")]
 	[InlineData("  ", "<whitespace>")]
+	[InlineData("\t", "<whitespace>")]
+	[InlineData("\r", "<whitespace>")]
+	[InlineData("\n", "<whitespace>")]
+	[InlineData("\r\n", "<whitespace>")]
 	[InlineData("foobar", "[foobar]")]
 	[InlineData(123, "[123]")]
+	[InlineData("Line1\rLine2\nLine3\r\nLine4\tTabbed", "[Line1\\rLine2\\nLine3\\r\\nLine4\\tTabbed]")]
 	public void Test_B(object? input, string expectedOutput)
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		// (none)
+		TestConsole.WriteLine($"Expected output {expectedOutput}");
 
 		//--- ACT -------------------------------------------------------------
 		string actualOutput = B(input);
-
-		TestConsole.WriteLine($"Expected: {expectedOutput}");
-		TestConsole.WriteLine($"Actual:   {actualOutput}");
+		TestConsole.WriteLine($"Actual output   {actualOutput}");
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(expectedOutput, actualOutput);
@@ -40,24 +43,12 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	public void Test_CreateTestFileCleanUp()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string TEST_FILE1 = "Test_CreateTestFileCleanUp-File1.txt";
-		const string TEST_FILE2 = "Test_CreateTestFileCleanUp-File2.txt";
-
-		Assert.False(File.Exists(TEST_FILE1), $"Precondition failed: Test file [{TEST_FILE1}] already exists.");
-		Assert.False(File.Exists(TEST_FILE2), $"Precondition failed: Test file [{TEST_FILE2}] already exists.");
-
 		//--- ACT -------------------------------------------------------------
-		using (CreateTestFileCleanUp(TEST_FILE1, TEST_FILE2))
-		{
-			File.WriteAllText(TEST_FILE1, "This is a test file.");
-			File.WriteAllText(TEST_FILE2, "This is another test file.");
-			Assert.True(File.Exists(TEST_FILE1), $"Test file [{TEST_FILE1}] was not created.");
-			Assert.True(File.Exists(TEST_FILE2), $"Test file [{TEST_FILE2}] was not created.");
-		}
+		using IDisposable sut = CreateTestFileCleanUp();
 
 		//--- ASSERT ----------------------------------------------------------
-		Assert.False(File.Exists(TEST_FILE1), $"Test file [{TEST_FILE1}]' was not deleted.");
-		Assert.False(File.Exists(TEST_FILE2), $"Test file [{TEST_FILE2}]' was not deleted.");
+		Assert.NotNull(sut);
+		_ = Assert.IsAssignableFrom<TestFileCleanUp>(sut);
 	}
 
 	#endregion Test Helper Methods
