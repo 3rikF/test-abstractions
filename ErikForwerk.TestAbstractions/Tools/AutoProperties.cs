@@ -82,7 +82,7 @@ public sealed class AutoProperties(Random? rand = null)
 	{
 		ArgumentNullException.ThrowIfNull(target);
 
-		PropertyInfo[] properties				= typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+		PropertyInfo[] properties				=target.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 		HashSet<string> excludedPropertyNames	= [.. exceptProperties];
 
 		foreach (PropertyInfo prop in properties)
