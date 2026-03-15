@@ -7,10 +7,8 @@ Basic test-class implementations and abstractions that simplify the most common 
 [![Current Repository Status](https://github.com/3rikF/test-abstractions/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/3rikF/test-abstractions/actions)
 [![Codecov Test Coverage](https://codecov.io/gh/3rikF/test-abstractions/graph/badge.svg?token=YAQHM5H3WY)](https://codecov.io/gh/3rikF/test-abstractions)
 [![WakaTime Tracking](https://wakatime.com/badge/user/ccce5eac-49f0-481f-998c-1183a3cd0b18/project/2c356cfb-4cbf-4f93-b0d3-fddd23d6e481.svg)](https://wakatime.com/badge/user/ccce5eac-49f0-481f-998c-1183a3cd0b18/project/2c356cfb-4cbf-4f93-b0d3-fddd23d6e481)
-[![NuGet](https://img.shields.io/nuget/v/ErikForwerk.TestAbstractions)](https://www.nuget.org/packages/ErikForwerk.TestAbstractions/)
-[![NuGet STA](https://img.shields.io/nuget/v/ErikForwerk.TestAbstractions.STA)](https://www.nuget.org/packages/ErikForwerk.TestAbstractions.STA/)
-
-## Table of Contents
+[![NuGet](https://img.shields.io/nuget/v/ErikForwerk.TestAbstractions?label=NuGet%20TestAbstractions)](https://www.nuget.org/packages/ErikForwerk.TestAbstractions/)
+[![NuGet STA](https://img.shields.io/nuget/v/ErikForwerk.TestAbstractions.STA?label=NuGet%20TestAbstractions.STA)](https://www.nuget.org/packages/ErikForwerk.TestAbstractions.STA/)
 
 - [Features](#features)
 - [Installation](#installation)
