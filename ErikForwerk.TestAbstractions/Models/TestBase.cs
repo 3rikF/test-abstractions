@@ -78,6 +78,16 @@ public abstract class TestBase(ITestOutputHelper output)
 				.Replace("\t", "\\t");
 	}
 
+	/// <summary>Returns a short string representation based on the specified type's name.</summary>
+	/// <remarks> 
+	/// Shorthand for <see cref="B(object)"/> that extracts the name of the specified type,
+	/// or returns a predefined constant if the type is null.
+	/// </remarks>
+	/// <param name="type">The type whose name is used to generate the string. Can be <see langword="null"/>.</param>
+	/// <returns>A string derived from the name of the specified type, or from a <see langword="null"/> value if the type is <see langword="null"/>.</returns>
+	protected static string B(Type? type)
+		=> B(type?.Name);
+
 	#endregion Methods
 
 	//-----------------------------------------------------------------------------------------------------------------
