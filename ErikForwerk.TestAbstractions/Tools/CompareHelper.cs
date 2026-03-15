@@ -3,7 +3,6 @@ using System.Reflection;
 
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 namespace ErikForwerk.TestAbstractions.Tools;
@@ -12,7 +11,7 @@ namespace ErikForwerk.TestAbstractions.Tools;
 public static class CompareHelper
 {
 	//-----------------------------------------------------------------------------------------------------------------
-	private delegate void PropertyAssertDelegate(string indentation, string propertyName, object? expectedValue, object? actualValue);
+	private delegate void PropertyAssertDelegate(string propertyName, object? expectedValue, object? actualValue);
 
 	//-----------------------------------------------------------------------------------------------------------------
 	#region Helper Methods
@@ -32,14 +31,14 @@ public static class CompareHelper
 
 			//--- if its an IEnumerable, compare the elements ------------------
 			if (expectedValue is IEnumerable<object?> expectedEnumeration && actualValue is IEnumerable<object?> actualEnumeration)
-				assertLogic(string.Empty, prop.Name, expectedEnumeration, actualEnumeration);
+				assertLogic(prop.Name, expectedEnumeration, actualEnumeration);
 
 			//--- if its an array, compare the elements -----------------------
 			else if (prop.PropertyType.IsArray && expectedValue is Array expectedArray && actualValue is Array actualArray)
-				assertLogic(string.Empty, prop.Name, expectedArray, actualArray);
+				assertLogic(prop.Name, expectedArray, actualArray);
 
 			else
-				assertLogic(string.Empty, prop.Name, expectedValue, actualValue);
+				assertLogic(prop.Name, expectedValue, actualValue);
 		}
 	}
 
@@ -48,11 +47,11 @@ public static class CompareHelper
 		AssertProperties(
 			expected
 			, actual
-			, (indentation, propertyName, a, b) =>
+			, (propertyName, a, b) =>
 			{
-				testOutput.WriteLine($"{indentation}[{propertyName}]");
+				testOutput.WriteLine($"[{propertyName}]");
 				Assert.Equal(a, b);
-				testOutput.WriteLine($"{indentation}[👍 '{a}' == '{b}']");
+				testOutput.WriteLine($"[👍 '{a}' == '{b}']");
 				testOutput.WriteLine(string.Empty);
 			});
 	}
@@ -62,11 +61,11 @@ public static class CompareHelper
 		AssertProperties(
 			expected
 			, actual
-			, (indentation, propertyName, a, b) =>
+			, (propertyName, a, b) =>
 			{
-				testOutput.WriteLine($"{indentation}[{propertyName}]");
+				testOutput.WriteLine($"[{propertyName}]");
 				Assert.NotEqual(a, b);
-				testOutput.WriteLine($"{indentation}[👍 '{a}' != '{b}']");
+				testOutput.WriteLine($"[👍 '{a}' != '{b}']");
 				testOutput.WriteLine(string.Empty);
 			});
 	}
