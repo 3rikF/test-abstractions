@@ -42,7 +42,6 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	[Fact]
 	public void Test_CreateTestFileCleanUp()
 	{
-		//--- ARRANGE ---------------------------------------------------------
 		//--- ACT -------------------------------------------------------------
 		using IDisposable sut = CreateTestFileCleanUp();
 
@@ -59,9 +58,6 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	[Fact]
 	public void Test_GetTestLogger()
 	{
-		//--- ARRANGE ---------------------------------------------------------
-		// (none)
-
 		//--- ACT -------------------------------------------------------------
 		TestLogger logger = GetTestLogger();
 
@@ -75,9 +71,6 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	[Fact]
 	public void Test_GetTestLogger_Generic()
 	{
-		//--- ARRANGE ---------------------------------------------------------
-		// (none)
-
 		//--- ACT -------------------------------------------------------------
 		TestLoggerGeneric<TestBaseTests> logger = GetTestLogger<TestBaseTests>();
 
@@ -121,8 +114,8 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	public void Test_FailTest_OneParam()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE = "This method should not have been executed. [param=foobar]";
-		const string TEST_PARAM = "foobar";
+		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param=foobar]";
+		const string TEST_PARAM			= "foobar";
 
 		//--- ACT -------------------------------------------------------------
 		FailException ex = Assert.Throws<FailException>(
@@ -140,9 +133,9 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	public void Test_FailTest_TwoParams()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE = "This method should not have been executed. [param1=foobar], [param2=69]";
-		const string TEST_PARAM1 = "foobar";
-		const int TEST_PARAM2 = 69;
+		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param1=foobar], [param2=69]";
+		const string TEST_PARAM1		= "foobar";
+		const int TEST_PARAM2			= 69;
 
 		//--- ACT -------------------------------------------------------------
 		FailException ex = Assert.Throws<FailException>(

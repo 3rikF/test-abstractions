@@ -3,8 +3,6 @@ using ErikForwerk.TestAbstractions.Models;
 
 using Xunit.Abstractions;
 
-using static System.Net.Mime.MediaTypeNames;
-
 //-----------------------------------------------------------------------------------------------------------------------------------------
 namespace ErikForwerk.TestAbstractions.Tests;
 
@@ -42,6 +40,7 @@ public sealed class TestFileCleanUpTests(ITestOutputHelper toh) : TestBase(toh)
 		{
 			// Dispose will be called automatically
 		}
+
 		//--- ASSERT ----------------------------------------------------------
 		Assert.False(File.Exists(nonExistentFile), "Non-existent file should remain non-existent.");
 	}

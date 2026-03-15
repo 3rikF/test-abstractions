@@ -3,10 +3,10 @@ using ErikForwerk.TestAbstractions.Models;
 
 using Microsoft.Extensions.Logging;
 
-using Xunit;
-
+//-----------------------------------------------------------------------------------------------------------------------------------------
 namespace ErikForwerk.TestAbstractions.Tests;
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
 public sealed class TestLoggerFactoryTests
 {
 	[Fact]
@@ -14,10 +14,10 @@ public sealed class TestLoggerFactoryTests
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		TestLogger expectedLogger	= new();
-		TestLoggerFactory factory	= new (expectedLogger);
+		TestLoggerFactory sut		= new (expectedLogger);
 
 		//--- ACT -------------------------------------------------------------
-		ILogger logger = factory.CreateLogger("Test logger");
+		ILogger logger = sut.CreateLogger("Test logger");
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(logger);
@@ -28,11 +28,11 @@ public sealed class TestLoggerFactoryTests
 	public void AddProvider_ThrowsNotImplementedException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestLoggerFactory factory = new (new TestLogger());
+		TestLoggerFactory sut = new (new TestLogger());
 
 		//--- ACT -------------------------------------------------------------
 		NotImplementedException ex = Assert.Throws<NotImplementedException>(
-			() => factory.AddProvider(null!));
+			() => sut.AddProvider(null!));
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal("The method or operation is not implemented.", ex.Message);
@@ -42,10 +42,10 @@ public sealed class TestLoggerFactoryTests
 	public void Dispose_ThrowsNotImplementedException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestLoggerFactory factory = new (new TestLogger());
+		TestLoggerFactory sut = new (new TestLogger());
 
 		//--- ACT -------------------------------------------------------------
-		NotImplementedException ex = Assert.Throws<NotImplementedException>(factory.Dispose);
+		NotImplementedException ex = Assert.Throws<NotImplementedException>(sut.Dispose);
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal("The method or operation is not implemented.", ex.Message);

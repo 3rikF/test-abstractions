@@ -22,13 +22,13 @@ public sealed class TestOutputCollectorTests
 	public void WriteLine_WithMessage_AddsMessageToOutput()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestOutputCollector collector = new ();
+		TestOutputCollector sut = new ();
 
 		//--- ACT -------------------------------------------------------------
-		collector.WriteLine("Hello, World!");
+		sut.WriteLine("Hello, World!");
 
 		//--- ASSERT ----------------------------------------------------------
-		string singenContent = Assert.Single(collector.Output);
+		string singenContent = Assert.Single(sut.Output);
 		Assert.Equal("Hello, World!", singenContent);
 	}
 
@@ -36,15 +36,15 @@ public sealed class TestOutputCollectorTests
 	public void WriteLine_WithMultipleMessages_AddsAllMessagesToOutput()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestOutputCollector collector = new ();
+		TestOutputCollector sut = new ();
 
 		//--- ACT -------------------------------------------------------------
-		collector.WriteLine("First");
-		collector.WriteLine("Second");
-		collector.WriteLine("Third");
+		sut.WriteLine("First");
+		sut.WriteLine("Second");
+		sut.WriteLine("Third");
 
 		//--- ASSERT ----------------------------------------------------------
-		Assert.Collection(collector.Output,
+		Assert.Collection(sut.Output,
 			item => Assert.Equal("First", item),
 			item => Assert.Equal("Second", item),
 			item => Assert.Equal("Third", item));
@@ -54,13 +54,13 @@ public sealed class TestOutputCollectorTests
 	public void WriteLine_WithFormatString_AddsFormattedMessageToOutput()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestOutputCollector collector = new ();
+		TestOutputCollector sut = new ();
 
 		//--- ACT -------------------------------------------------------------
-		collector.WriteLine("Hello, {0}!", "World");
+		sut.WriteLine("Hello, {0}!", "World");
 
 		//--- ASSERT ----------------------------------------------------------
-		string singleContent = Assert.Single(collector.Output);
+		string singleContent = Assert.Single(sut.Output);
 		Assert.Equal("Hello, World!", singleContent);
 	}
 }

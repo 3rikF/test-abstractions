@@ -108,8 +108,8 @@ public sealed class CompareHelperTests(ITestOutputHelper toh) : TestBase(toh)
 	public void CompareTestHelper_SimpleProperties(bool expectedEquality, string? testStringA, string? testStringB)
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		FirstDummyTestClass obj1 = new() { Name = testStringA };
-		FirstDummyTestClass obj2 = new() { Name = testStringB };
+		FDTC obj1 = new() { Name = testStringA };
+		FDTC obj2 = new() { Name = testStringB };
 
 		//--- ACT & ASSERT ----------------------------------------------------
 		Exception exception = Record.Exception(

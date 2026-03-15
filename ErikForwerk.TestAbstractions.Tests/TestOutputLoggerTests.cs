@@ -18,10 +18,10 @@ public sealed class TestOutputLoggerTests
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		Mock<ITestOutputHelper> testOutputHelperMock = new();
-		TestOutputLogger logger = new(testOutputHelperMock.Object);
+		TestOutputLogger sut = new(testOutputHelperMock.Object);
 
 		//--- ACT -------------------------------------------------------------
-		logger.Log(
+		sut.Log(
 			LogLevel.Information
 			, new EventId(1)
 			, "Test message"
@@ -39,12 +39,12 @@ public sealed class TestOutputLoggerTests
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		Mock<ITestOutputHelper> testOutputHelperMock = new();
-		TestOutputLogger logger = new(testOutputHelperMock.Object);
+		TestOutputLogger sut = new(testOutputHelperMock.Object);
 
 		//--- ACT -------------------------------------------------------------
-		using (logger.BeginScope("Scope"))
+		using (sut.BeginScope("Scope"))
 		{
-			logger.Log(
+			sut.Log(
 				LogLevel.Information
 				, new EventId(1)
 				, "Test message"
@@ -68,10 +68,10 @@ public sealed class TestOutputLoggerTests
 	public void IsEnabled_ShouldReturnCorrectValue(LogLevel logLevel, bool expected)
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestOutputLogger logger = new(Mock.Of<ITestOutputHelper>());
+		TestOutputLogger sut = new(Mock.Of<ITestOutputHelper>());
 
 		//--- ACT -------------------------------------------------------------
-		bool result = logger.IsEnabled(logLevel);
+		bool result = sut.IsEnabled(logLevel);
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(expected, result);
@@ -114,7 +114,7 @@ public sealed class TestOutputLoggerTests
 	public void TestLogger_BeginScope_DoesNotChangeIndentation()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestLogger sut					= new();
+		TestLogger sut = new();
 
 		//--- ACT -------------------------------------------------------------
 		sut.Log(LogLevel.Information, new EventId(1), "No indent", null, (s, e) => s.ToString());
@@ -146,13 +146,14 @@ public sealed class TestOutputLoggerTests
 	public void LogMessages_WhenMessageContainsNewLines_ResultsInMultipleLines()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const int ExpectedLineCount = 3;
-		TestOutputCollector mockTestConsole = new();
-		TestOutputLogger logger = new(mockTestConsole);
-		string message = "First line\r\nSecond line\r\nThird line";
+		const int ExpectedLineCount			= 3;
+		string message						= "First line\r\nSecond line\r\nThird line";
+
+		TestOutputCollector mockTestConsole	= new();
+		TestOutputLogger sut				= new(mockTestConsole);
 
 		//--- ACT -------------------------------------------------------------
-		logger.Log(LogLevel.Information, new EventId(1), message, null, (s, e) => s.ToString());
+		sut.Log(LogLevel.Information, new EventId(1), message, null, (s, e) => s.ToString());
 
 		//--- ASSERT ----------------------------------------------------------
 		//--- "\r\n" will be replaced by "\n" ---

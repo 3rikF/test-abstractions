@@ -3,20 +3,20 @@ using ErikForwerk.TestAbstractions.Models;
 
 using Microsoft.Extensions.Logging;
 
-using Xunit;
-
+//-----------------------------------------------------------------------------------------------------------------------------------------
 namespace ErikForwerk.TestAbstractions.Tests;
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
 public sealed class TestLoggerTests
 {
 	[Fact]
 	public void LogMessages_WhenNoMessagesLogged_ReturnsEmptyCollection()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestLogger logger = new ();
+		TestLogger sut = new ();
 
 		//--- ACT -------------------------------------------------------------
-		IEnumerable<string> messages = logger.LogMessages;
+		IEnumerable<string> messages = sut.LogMessages;
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Empty(messages);
@@ -26,14 +26,14 @@ public sealed class TestLoggerTests
 	public void LogMessages_WhenMessagesLogged_ReturnsCollectionOfMessages()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestLogger logger = new ();
+		TestLogger sut = new ();
 
 		//--- ACT -------------------------------------------------------------
-		logger.Log(LogLevel.Information, new EventId(1), "Test message", null, (s, e) => s.ToString());
-		logger.Log(LogLevel.Warning, new EventId(2), "Another test message", null, (s, e) => s.ToString());
+		sut.Log(LogLevel.Information, new EventId(1), "Test message", null, (s, e) => s.ToString());
+		sut.Log(LogLevel.Warning, new EventId(2), "Another test message", null, (s, e) => s.ToString());
 
 		//--- ASSERT ----------------------------------------------------------
-		Assert.Collection(logger.LogMessages,
+		Assert.Collection(sut.LogMessages,
 			item => Assert.Equal("Test message", item),
 			item => Assert.Equal("Another test message", item));
 	}
@@ -42,17 +42,17 @@ public sealed class TestLoggerTests
 	public void IsInScope()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestLogger logger = new ();
+		TestLogger sut = new ();
 
 		//--- ACT -------------------------------------------------------------
-		using (logger.BeginScope("Test scope"))
+		using (sut.BeginScope("Test scope"))
 		{
 			//--- ASSERT ------------------------------------------------------
-			Assert.True(logger.IsInScope);
+			Assert.True(sut.IsInScope);
 		}
 
 		//--- ASSERT ----------------------------------------------------------
-		Assert.False(logger.IsInScope);
+		Assert.False(sut.IsInScope);
 	}
 
 	[Theory]
@@ -66,10 +66,10 @@ public sealed class TestLoggerTests
 	public void IsEnabled(LogLevel logLevel, bool expected)
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		TestLogger logger = new ();
+		TestLogger sut = new ();
 
 		//--- ACT -------------------------------------------------------------
-		bool isEnabled = logger.IsEnabled(logLevel);
+		bool isEnabled = sut.IsEnabled(logLevel);
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(expected, isEnabled);
