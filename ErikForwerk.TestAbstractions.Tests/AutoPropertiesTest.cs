@@ -1,5 +1,6 @@
 ﻿
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 using ErikForwerk.TestAbstractions.Models;
 using ErikForwerk.TestAbstractions.Tools;
@@ -122,7 +123,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	#region GenerateClassInstance
 
 	[Fact]
-	public void GenerateClassInstance_PlainClass_Simple()
+	public void GenerateClassInstance_ViaGeneric()
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		AutoProperties uut = new(new Random());
@@ -136,7 +137,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	}
 
 	[Fact]
-	public void GenerateClassInstance_DoesNotReturnDefaultValues()
+	public void GenerateClassInstance_ViaTypeParameter()
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		AutoProperties uut = new(new Random());
@@ -145,7 +146,12 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		TestClassFlat result = uut.GenerateClassInstance<TestClassFlat>();
 
 		//--- ASSERT ----------------------------------------------------------
+		Assert.NotNull(result);
+		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated flat object");
+	}
 
+	private static void AssertNotDefaultValues(TestClassFlat result)
+	{
 		//--- numeric types ---
 		Assert.NotEqual(default, result.ULongProperty);
 		Assert.NotEqual(default, result.LongProperty);
@@ -196,6 +202,34 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		_ = Assert.NotNull(result.DateTimeOffset1);
 		Assert.NotEqual(default, result.DateTimeOffset2);
+	}
+
+	[Fact]
+	public void GenerateClassInstance_ViaGeneric_DoesNotReturnDefaultValues()
+	{
+		//--- ARRANGE ---------------------------------------------------------
+		AutoProperties uut = new(new Random(10));
+
+		//--- ACT -------------------------------------------------------------
+		TestClassFlat result = uut.GenerateClassInstance<TestClassFlat>();
+
+		//--- ASSERT ----------------------------------------------------------
+		AssertNotDefaultValues(result);
+
+		TestConsole.WriteLine($"[✔️ PASSED] All properties have non-default values");
+	}
+
+	[Fact]
+	public void GenerateClassInstance_ViaTypeParameter_DoesNotReturnDefaultValues()
+	{
+		//--- ARRANGE ---------------------------------------------------------
+		AutoProperties uut = new(new Random(10));
+
+		//--- ACT -------------------------------------------------------------
+		TestClassFlat result = (TestClassFlat)uut.GenerateClassInstance(typeof(TestClassFlat));
+
+		//--- ASSERT ----------------------------------------------------------
+		AssertNotDefaultValues(result);
 
 		TestConsole.WriteLine($"[✔️ PASSED] All properties have non-default values");
 	}
@@ -548,5 +582,24 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		TestConsole.WriteLine($"[✔️ PASSED] Successfully randomly chosen to single allowed enum-value [{value}]");
 	}
 
+	[Fact]
+	public void GetDefaultEnumValue_ReturnsDefault()
+	{
+		//--- ARRANGE ---------------------------------------------------------
+		MethodInfo? method = typeof(AutoProperties)
+			.GetMethod("GetDefaultEnumValue", BindingFlags.NonPublic | BindingFlags.Static);
+
+		Assert.NotNull(method);
+
+		//--- ACT -------------------------------------------------------------
+		object? result = method.Invoke(null, [typeof(ETestEnum)]);
+
+		//--- ASSERT ----------------------------------------------------------
+		Assert.NotNull(result);
+		Assert.IsType<ETestEnum>(result);
+		Assert.Equal(ETestEnum.Unset, result);
+
+		TestConsole.WriteLine($"[✔️ PASSED] GetDefaultEnumValue returned default enum value [{result}]");
+	}
 	#endregion Test Methods
 }
