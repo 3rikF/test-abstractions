@@ -26,7 +26,6 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		Five,
 	}
 
-
 	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
 	private class TestClassFlat
 	{
@@ -76,8 +75,12 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		public DateTime? DateTimeOffset1 { get; set; }
 		public DateTimeOffset DateTimeOffset2 { get; set; }
-	}
 
+		public Uri? UriProperty { get; set; }
+		public Guid? GuidProperty { get; set; }
+		public DateOnly? DateOnlyProperty { get; set; }
+		public TimeOnly? TimeOnlyProperty { get; set; }
+	}
 
 	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
 	private sealed class TestClassTree : TestClassFlat
@@ -95,23 +98,11 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 	}
 
-
 	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
 	private sealed class TestClassWithUnsupportedTypes
 	{
-		public Guid? GuidProperty { get; set; }
 		public CancellationToken? CancellationTokenProperty { get; set; }
-		public DateOnly? DateOnlyProperty { get; set; }
-		public TimeOnly? TimeOnlyProperty { get; set; }
 	}
-
-
-	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
-	private sealed class TestClassWithUncooperativeTypes
-	{
-		public Uri? UriProperty { get; set; }
-	}
-
 
 	[ExcludeFromCodeCoverage(Justification = "dummy test-class without logic")]
 	private sealed record TestClassWithoutDefaultConstructor(string Name)
@@ -293,34 +284,18 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 	public void GenerateClassInstance_NotSupportedType_ThrowsException()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE_PART	= "Type [Guid] is not supported.";
+		const string EXPECTED_MESSAGE_PART	= "Type [CancellationToken] is not supported.";
 		AutoProperties sut					= new();
-
+	
 		//--- ACT -------------------------------------------------------------
 		NotSupportedException ex = Assert.Throws<NotSupportedException>(
 			sut.GenerateClassInstance<TestClassWithUnsupportedTypes>);
-
+	
 		//--- Assert ----------------------------------------------------------
 		Assert.NotNull(ex);
 		Assert.Contains(EXPECTED_MESSAGE_PART, ex.Message);
-
+	
 		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw {nameof(NotSupportedException)} with message containing [{EXPECTED_MESSAGE_PART}]");
-	}
-
-	[Fact]
-	public void GenerateClassInstance_NotSupportedProperties_ThrowsException()
-	{
-		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE_PART = "Type [Uri] must be a class with a parameterless constructor.";
-		AutoProperties sut = new();
-
-		//--- ACT -------------------------------------------------------------
-		ArgumentException ex = Assert.Throws<ArgumentException>(
-			sut.GenerateClassInstance<TestClassWithUncooperativeTypes>);
-
-		//--- Assert ----------------------------------------------------------
-		Assert.NotNull(ex);
-		Assert.Contains(EXPECTED_MESSAGE_PART, ex.Message);
 	}
 
 	[Theory]

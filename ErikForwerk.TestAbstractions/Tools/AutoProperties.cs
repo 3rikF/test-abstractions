@@ -22,6 +22,9 @@ public sealed class AutoProperties(Random? rand = null)
 	public void ResetRandom(int seed = DEFAULT_RAND_SEED)
 		=> _rand = new Random(seed);
 
+	public DateTime GenerateDateTime()
+		=> new DateTime(_rand.NextInt64(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks));
+
 	public Guid GenerateGuid()
 	{
 		byte[] randGuidData = new byte[16];
@@ -55,27 +58,30 @@ public sealed class AutoProperties(Random? rand = null)
 	//-----------------------------------------------------------------------------------------------------------------
 	#region Auto Property Methods
 
-	public T GenerateClassInstance<T>()
-		where T : new()
-	{
-		T result = new ();
-		SetProperties(result);
-
-		return result;
-	}
+	public T GenerateClassInstance<T>() where T : new()
+		=> (T)GenerateClassInstance(typeof(T));
 
 	public object GenerateClassInstance(Type type)
 	{
 		ArgumentNullException.ThrowIfNull(type);
 
+		//---special / uncooperative class types ---
+		if (type == typeof(Uri))
+		{
+			return new Uri($"https://example.com/{GenerateString()}");
+		}
+
 		//--- check if the type is a class and has a parameterless constructor ---
-		if (!type.IsClass || type.GetConstructor(Type.EmptyTypes) is null)
+		else if (!type.IsClass || type.GetConstructor(Type.EmptyTypes) is null)
 			throw new ArgumentException($"Type [{type.Name}] must be a class with a parameterless constructor.", nameof(type));
 
-		object obj = Activator.CreateInstance(type)!;
+		else
+		{
+			object obj = Activator.CreateInstance(type)!;
+			SetProperties(obj);
 
-		SetProperties(obj);
-		return obj;
+			return obj;
+		}
 	}
 
 	public void SetProperties<T>(T target, params string[] exceptProperties)
@@ -177,16 +183,15 @@ public sealed class AutoProperties(Random? rand = null)
 		Type t when t == typeof(char)			=> (char)_rand.Next(byte.MaxValue),
 		Type t when t == typeof(bool)			=> _rand.Next(0, 2) == 1,
 
-		Type t when t == typeof(DateTime)		=> new DateTime(_rand.NextInt64(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks)),
+		Type t when t == typeof(DateTime)		=> GenerateDateTime(),
 		Type t when t == typeof(DateTimeOffset)	=> new DateTimeOffset(_rand.NextInt64(DateTimeOffset.MinValue.Ticks, DateTimeOffset.MaxValue.Ticks), TimeSpan.FromHours(_rand.Next(-12, 12))),
 
-		//Type t when t == typeof(DateOnly)         => DateOnly.FromDateTime(DateTime.Now),
-		//Type t when t == typeof(TimeOnly)         => TimeOnly.FromDateTime(DateTime.Now),
-		//Type t when t == typeof(Guid)             => GenerateGuid(),
-		//Type t when t == typeof(Uri)              => new Uri($"https://example.com/{GenerateString()}"),
+		Type t when t == typeof(DateOnly)		=> DateOnly.FromDateTime(GenerateDateTime()),
+		Type t when t == typeof(TimeOnly)		=> TimeOnly.FromDateTime(GenerateDateTime()),
+		Type t when t == typeof(Guid)			=> GenerateGuid(),
 		//Type t when t == typeof(CancellationToken) => new CancellationToken(),
 		//Type t when t == typeof(CancellationTokenSource) => new CancellationTokenSource(),
-		//Type t when t == typeof(Task)             => Task.CompletedTask,
+		//Type t when t == typeof(Task)			=> Task.CompletedTask,
 
 		{ IsEnum: true }	=> GetRandomEnum(elementType, GetDefaultEnumValue(elementType)),
 		{ IsClass: true }	=> GenerateClassInstance(elementType),

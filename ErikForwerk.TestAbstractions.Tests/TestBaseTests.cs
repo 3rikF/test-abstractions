@@ -40,6 +40,37 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	}
 
 	[Fact]
+	public void Test_B_AlreadyBracketed()
+	{
+		//--- ARRANGE ---------------------------------------------------------
+		const string INPUT				= "[AlreadyBracketed]";
+		const string EXPECTED_OUTPUT	= "[AlreadyBracketed]";
+		TestConsole.WriteLine($"Expected output {EXPECTED_OUTPUT}");
+	
+		//--- ACT -------------------------------------------------------------
+		string actualOutput = B(INPUT);
+		TestConsole.WriteLine($"Actual output   {actualOutput}");
+		
+		//--- ASSERT ----------------------------------------------------------
+		Assert.Equal(EXPECTED_OUTPUT, actualOutput);
+	}
+
+	[Theory]
+	[InlineData(null, "<null>")]
+	[InlineData(typeof(TestBaseTests), "[TestBaseTests]")]
+	public void Test_B_TypeShorthand(Type? testType, string expectedOutput)
+	{
+		//--- ACT -------------------------------------------------------------
+		string actualOutput = B(testType);
+
+		TestConsole.WriteLine($"Expected output       {expectedOutput}");
+		TestConsole.WriteLine($"Actual output         {actualOutput}");
+
+		//--- ASSERT ----------------------------------------------------------
+		Assert.Equal(expectedOutput, actualOutput);
+	}
+
+	[Fact]
 	public void Test_CreateTestFileCleanUp()
 	{
 		//--- ACT -------------------------------------------------------------
