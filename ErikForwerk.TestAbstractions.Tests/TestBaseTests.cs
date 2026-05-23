@@ -46,18 +46,29 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 		const string INPUT				= "[AlreadyBracketed]";
 		const string EXPECTED_OUTPUT	= "[AlreadyBracketed]";
 		TestConsole.WriteLine($"Expected output {EXPECTED_OUTPUT}");
-	
+
 		//--- ACT -------------------------------------------------------------
 		string actualOutput = B(INPUT);
 		TestConsole.WriteLine($"Actual output   {actualOutput}");
-		
+
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(EXPECTED_OUTPUT, actualOutput);
 	}
 
 	[Theory]
-	[InlineData(null, "<null>")]
-	[InlineData(typeof(TestBaseTests), "[TestBaseTests]")]
+	[InlineData(null,						"<null>")]
+	[InlineData(typeof(TestBaseTests),		"[TestBaseTests]")]
+	[InlineData(typeof(int),				"[Int32]")]
+	[InlineData(typeof(long),				"[Int64]")]
+	[InlineData(typeof(byte),				"[Byte]")]
+	[InlineData(typeof(float),				"[Float]")]
+	[InlineData(typeof(double),				"[Double]")]
+	[InlineData(typeof(string),				"[String]")]
+	[InlineData(typeof(int[]),				"[Int32[]]")]
+	[InlineData(typeof(IEnumerable<int>),	"[IEnumerable<Int32>]")]
+	[InlineData(typeof(Action<float, int, string>),		"[Action<Float, Int32, String>]")]
+	[InlineData(typeof(Func<float, int, string>),		"[Func<Float, Int32, String>]")]
+	[InlineData(typeof(ValueTuple<float, int, string>),	"[ValueTuple<Float, Int32, String>]")]
 	public void Test_B_TypeShorthand(Type? testType, string expectedOutput)
 	{
 		//--- ACT -------------------------------------------------------------

@@ -1,8 +1,6 @@
 ﻿
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -40,6 +38,11 @@ public abstract class TestBase(ITestOutputHelper output)
 	//-----------------------------------------------------------------------------------------------------------------
 	#region Methods
 
+	/// <summary>
+	///
+	/// </summary>
+	/// <param name="filePaths"></param>
+	/// <returns></returns>
 	protected IDisposable CreateTestFileCleanUp(params string[] filePaths)
 		=> new TestFileCleanUp(TestConsole, filePaths);
 
@@ -78,15 +81,53 @@ public abstract class TestBase(ITestOutputHelper output)
 				.Replace("\t", "\\t");
 	}
 
+	/// <summary>
+	/// Returns a friendly type name for the specified type, handling arrays and generic types with appropriate formatting.
+	/// </summary>
+	/// <param name="t">The type for which to get a friendly name.</param>
+	/// <returns>A friendly type name for the specified type.</returns>
+	protected static string GetFriendlyTypeName(Type t)
+	{
+		if (t.IsArray)
+		{
+			int rank			= t.GetArrayRank();
+			string rankBrackets	= rank == 1 ? "[]" : $"[{new string(',', rank - 1)}]";
+			return GetFriendlyTypeName(t.GetElementType()!) + rankBrackets;
+		}
+
+		else if (t.IsGenericType)
+		{
+			string name			= t.Name;
+			int backtickIndex	= name.IndexOf('`');
+			if (backtickIndex > 0)
+				name = name[..backtickIndex];
+
+			Type[] genericArguments = t.GetGenericArguments();
+			string arguments = string.Join(", ", genericArguments.Select(arg => GetFriendlyTypeName(arg)));
+			return $"{name}<{arguments}>";
+		}
+
+		else if (t == typeof(float))
+			return "Float"; // would otherwise be "Single"
+
+		else
+			return t.Name;
+	}
+
 	/// <summary>Returns a short string representation based on the specified type's name.</summary>
-	/// <remarks> 
+	/// <remarks>
 	/// Shorthand for <see cref="B(object)"/> that extracts the name of the specified type,
 	/// or returns a predefined constant if the type is null.
 	/// </remarks>
 	/// <param name="type">The type whose name is used to generate the string. Can be <see langword="null"/>.</param>
 	/// <returns>A string derived from the name of the specified type, or from a <see langword="null"/> value if the type is <see langword="null"/>.</returns>
 	protected static string B(Type? type)
-		=> B(type?.Name);
+	{
+		if (type is null)
+			return NULL_STRING;
+		else
+			return $"[{GetFriendlyTypeName(type)}]";
+	}
 
 	#endregion Methods
 
