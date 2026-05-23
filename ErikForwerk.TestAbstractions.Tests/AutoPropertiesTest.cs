@@ -286,15 +286,15 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		//--- ARRANGE ---------------------------------------------------------
 		const string EXPECTED_MESSAGE_PART	= "Type [CancellationToken] is not supported.";
 		AutoProperties sut					= new();
-	
+
 		//--- ACT -------------------------------------------------------------
 		NotSupportedException ex = Assert.Throws<NotSupportedException>(
 			sut.GenerateClassInstance<TestClassWithUnsupportedTypes>);
-	
+
 		//--- Assert ----------------------------------------------------------
 		Assert.NotNull(ex);
 		Assert.Contains(EXPECTED_MESSAGE_PART, ex.Message);
-	
+
 		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw {nameof(NotSupportedException)} with message containing [{EXPECTED_MESSAGE_PART}]");
 	}
 
@@ -441,16 +441,13 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		TestConsole.WriteLine($"Testing with minLength=[{minLength}], maxLength=[{maxLength}]");
 		AutoProperties sut = new();
 
-		int[]? result = null;
-
 		//--- ACT -------------------------------------------------------------
 		Exception ex = Record.Exception(
-			() => result = sut.GenerateArray<int>(minLength, maxLength));
+			() => _ = sut.GenerateArray<int>(minLength, maxLength));
 
 		TestConsole.WriteLine($"[{ex.GetType().Name}] => [{ex.Message}]");
 
 		//--- ASSERT ----------------------------------------------------------
-		Assert.Null(result);
 		ArgumentOutOfRangeException aoorex = Assert.IsType<ArgumentOutOfRangeException>(ex);
 		Assert.Contains(expectedMessagePart, aoorex.Message);
 
