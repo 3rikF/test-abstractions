@@ -1,0 +1,74 @@
+name: CI – Build & Test (v2 + v3)
+
+#------------------------------------------------------------------------------------------------------------------------------------------
+env:
+  SOLUTION_V2: "./ErikForwerk.TestAbstractions.v2.slnx"
+  SOLUTION_V3: "./ErikForwerk.TestAbstractions.v3.slnx"
+
+#------------------------------------------------------------------------------------------------------------------------------------------
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+#------------------------------------------------------------------------------------------------------------------------------------------
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        CONFIGURATION: [Debug, Release]
+
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
+    # --- v2 ---
+    - name: Restore v2
+      run: dotnet restore $env:SOLUTION_V2
+
+    - name: Build v2
+      run: dotnet build $env:SOLUTION_V2 --configuration $env:Configuration --no-restore
+      env:
+        Configuration: ${{ matrix.CONFIGURATION }}
+
+    - name: Test v2
+      run: dotnet test $env:SOLUTION_V2 --configuration $env:Configuration --no-build --collect:"XPlat Code Coverage;Format=json,cobertura"
+      env:
+        Configuration: ${{ matrix.CONFIGURATION }}
+
+    # --- v3 ---
+    - name: Restore v3
+      run: dotnet restore $env:SOLUTION_V3
+
+    - name: Build v3
+      run: dotnet build $env:SOLUTION_V3 --configuration $env:Configuration --no-restore
+      env:
+        Configuration: ${{ matrix.CONFIGURATION }}
+
+    - name: Test v3
+      run: dotnet test $env:SOLUTION_V3 --configuration $env:Configuration --no-build --collect:"XPlat Code Coverage;Format=json,cobertura"
+      env:
+        Configuration: ${{ matrix.CONFIGURATION }}
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./TestResults/**/*.cobertura.xml
+        flags: unittests

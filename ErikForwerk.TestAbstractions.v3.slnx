@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/GitHubFiles/">
+    <File Path=".github/workflows/ci-build-and-test.yml" />
     <File Path=".github/workflows/build-v2.yml" />
 	<File Path=".github/workflows/build-v3.yml" />
 	<File Path="README.md" />
