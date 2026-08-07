@@ -1,18 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Title>Test Abstractions STA</Title>
+		<Title>Test Abstractions STA v3</Title>
 		<IsPackable>true</IsPackable>
 		<OutputType>Library</OutputType>
 
 		<!-- NuGet Package Metadata -->
-		<PackageId>ErikForwerk.TestAbstractions.STA</PackageId>
+		<PackageId>ErikForwerk.TestAbstractions.STA.v3</PackageId>
 		<Authors>Erik Forwerk</Authors>
-		<Description>Test abstractions and helpers for unit testing with xUnit in STA (Single-Threaded Apartment) mode for Windows</Description>
-		<PackageTags>testing;xunit;abstractions;unittest;sta;windows</PackageTags>
+		<Description>Test abstractions and helpers for unit testing with xUnit.v3 in STA (Single-Threaded Apartment) mode for Windows</Description>
+		<PackageTags>testing;xunit;xunit.v3;abstractions;unittest;sta;windows</PackageTags>
 		<RepositoryUrl>https://github.com/3rikF/test-abstractions</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -22,8 +22,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
-		<PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
-		<ProjectReference Include="..\ErikForwerk.TestAbstractions\ErikForwerk.TestAbstractions.csproj" />
+		<PackageReference Include="xunit.v3.extensibility.core" Version="3.2.2" />
+		<ProjectReference Include="..\ErikForwerk.TestAbstractions.v3\ErikForwerk.TestAbstractions.v3.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

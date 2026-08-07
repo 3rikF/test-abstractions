@@ -1,9 +1,9 @@
-name: .NET Core Build and Pack NuGet
+name: Build and Pack v2-NuGet
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 env:
   # Replace with your solution name, i.e. MyWpfApp.sln.
-  SOLUTION_NAME: "./ErikForwerk.TestAbstractions.slnx"
+  SOLUTION_NAME: "./ErikForwerk.TestAbstractions.v2.slnx"
   PROJECT_BASE: "./ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj"
   PROJECT_STA: "./ErikForwerk.TestAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj"
 

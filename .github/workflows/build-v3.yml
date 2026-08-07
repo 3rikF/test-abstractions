@@ -1,0 +1,226 @@
+name: Build and Pack v3-NuGet
+
+#------------------------------------------------------------------------------------------------------------------------------------------
+env:
+  # Replace with your solution name, i.e. MyWpfApp.sln.
+  SOLUTION_NAME: "./ErikForwerk.TestAbstractions.v3.slnx"
+  PROJECT_BASE: "./ErikForwerk.TestAbstractions.v3/ErikForwerk.TestAbstractions.csproj"
+  PROJECT_STA: "./ErikForwerk.TestAbstractions.v3.STA/ErikForwerk.TestAbstractions.STA.csproj"
+
+#------------------------------------------------------------------------------------------------------------------------------------------
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+#------------------------------------------------------------------------------------------------------------------------------------------
+jobs:
+  build:
+    # For a list of available runner types, refer to
+    # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        CONFIGURATION: [Debug, Release]
+
+    permissions:
+      contents: read  # Required to checkout code
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 9.0.x
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v3
+
+    # Restore the application
+    - name: Restore the application
+      run: dotnet restore $env:SOLUTION_NAME
+
+    # Build the solution
+    - name: Build solution
+      run: dotnet build $env:SOLUTION_NAME --configuration $env:Configuration --no-restore
+      env:
+        Configuration: ${{ matrix.CONFIGURATION }}
+
+    # Execute all unit tests in the solution without rebuilding
+    - name: Execute unit tests
+      run: dotnet test $env:SOLUTION_NAME --configuration $env:Configuration --no-build --collect:"XPlat Code Coverage;Format=json,cobertura"
+      env:
+        Configuration: ${{ matrix.CONFIGURATION }}
+
+    # taken from a Codecov example
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v6
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./TestResults/**/*.cobertura.xml
+        flags: unittests
+    #   name: codecov-umbrella
+
+  #----------------------------------------------------------------------------------------------------------------------------------------
+  pack-and-publish:
+    needs: build
+    # Only run on main branch when tests are successful
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Required to create and push tags
+      packages: write  # Required for publishing packages
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 9.0.x
+
+    # Determine the latest version tag and calculate new version
+    - name: Determine new version
+      id: version
+      shell: bash # Explicitly use Bash
+      run: |
+        # The Bash-logic for determine the new version
+        # ------------------------------------
+
+        # 1. fetch tags
+        git fetch --tags
+
+        # 2. Find the last SemVer-tag
+        # Sort the tags and select the last (highest) one.
+        latestTag=$(git tag -l "v*.*.*" | sort -V | tail -n 1)
+
+        if [ -z "$latestTag" ]; then
+          # No tag found, start at 0.0.0
+          latestTag="v0.0.0"
+        fi
+
+        # 3. Extract version parts
+        # Remove the 'v' and split version
+        version=${latestTag#v}
+        IFS='.' read -r major minor patch <<< "$version"
+
+        # 4. determine Bump-type (Fallback to 'patch')
+        bump_type="${{ github.event.inputs.bump }}"
+        if [ -z "$bump_type" ]; then
+          bump_type="patch"
+        fi
+
+        # 5. Increase version
+        case "$bump_type" in
+          major)
+            major=$((major + 1))
+            minor=0
+            patch=0
+            ;;
+          minor)
+            minor=$((minor + 1))
+            patch=0
+            ;;
+          patch)
+            patch=$((patch + 1))
+            ;;
+        esac
+
+        newVersion="$major.$minor.$patch"
+        newTag="v$newVersion"
+
+        # 6. Outputs to log
+        echo "Previous version: $latestTag"
+        echo "New version: $newTag"
+
+        # 7. Output as environment variable for following steps
+        echo "version=$newVersion" >> $GITHUB_OUTPUT
+        echo "tag=$newTag" >> $GITHUB_OUTPUT
+
+    # Create and push new version tag
+    - name: Create version tag
+      #shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag ${{ steps.version.outputs.tag }}
+        git push origin ${{ steps.version.outputs.tag }}
+
+    # Build the solution with new version
+    - name: Build solution
+      # since this is a new step, we have to rebuild everything
+      # and since we build windows-target under linux, we need to add "/p:EnableWindowsTargeting=true"
+      run: |
+        dotnet build $PROJECT_BASE --configuration Release /p:Version=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true
+        dotnet build $PROJECT_STA --configuration Release /p:Version=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true
+
+    # Pack the NuGet package
+    - name: Pack NuGet package
+      id: pack
+      shell: bash
+      run: |
+        PACKAGE_VERSION="${{ steps.version.outputs.version }}"
+
+        # Pack the NuGet packages for both projects
+        dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION /p:EnableWindowsTargeting=true -o ./artifacts
+        dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION /p:EnableWindowsTargeting=true -o ./artifacts
+
+        # Build and store the exact package name for the push step (Fail-Safe)
+        PACKAGE_NAME_BASE=$(basename $PROJECT_BASE .csproj | sed 's/\.csproj$//')
+        NUPKG_PATH="./artifacts/${PACKAGE_NAME_BASE}.${PACKAGE_VERSION}.nupkg"
+
+        PACKAGE_NAME_STA=$(basename $PROJECT_STA .csproj | sed 's/\.csproj$//')
+        NUPKG_PATH_STA="./artifacts/${PACKAGE_NAME_STA}.${PACKAGE_VERSION}.nupkg"
+
+        # Export the exact paths as outputs for the push step
+        echo "nupkg_path=$NUPKG_PATH" >> $GITHUB_OUTPUT
+        echo "nupkg_path_sta=$NUPKG_PATH_STA" >> $GITHUB_OUTPUT
+        echo "package_name_base=$PACKAGE_NAME_BASE" >> $GITHUB_OUTPUT
+        echo "package_name_sta=$PACKAGE_NAME_STA" >> $GITHUB_OUTPUT
+
+    # Publish to NuGet (Fail-Safe)
+    - name: Publish to NuGet (Fail-Safe)
+      shell: bash
+      run: |
+        PACKAGE_VERSION="${{ steps.version.outputs.version }}"
+        if dotnet nuget push ${{ steps.pack.outputs.nupkg_path }} --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate; then
+          echo "Published package: ${{ steps.pack.outputs.nupkg_path }}"
+          echo "Check online status at: https://www.nuget.org/packages/${{ steps.pack.outputs.package_name_base }}/${PACKAGE_VERSION}"
+        else
+          echo "::error::Failed to publish package: ${{ steps.pack.outputs.nupkg_path }}"
+          exit 1
+        fi
+
+        # Also publish the STA variant
+        if dotnet nuget push ${{ steps.pack.outputs.nupkg_path_sta }} --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate; then
+          echo "Published STA package: ${{ steps.pack.outputs.nupkg_path_sta }}"
+          echo "Check online status at: https://www.nuget.org/packages/${{ steps.pack.outputs.package_name_sta }}/${PACKAGE_VERSION}"
+        else
+          echo "::error::Failed to publish STA package: ${{ steps.pack.outputs.nupkg_path_sta }}"
+          exit 1
+        fi
+

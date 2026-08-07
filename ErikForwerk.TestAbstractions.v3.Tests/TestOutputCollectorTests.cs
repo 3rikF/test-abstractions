@@ -1,8 +1,8 @@
 
-//-----------------------------------------------------------------------------------------------------------------------------------------
 using Xunit;
 
-namespace ErikForwerk.TestAbstractions.Tests;
+//-----------------------------------------------------------------------------------------------------------------------------------------
+namespace ErikForwerk.TestAbstractions.v3.Tests;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 public sealed class TestOutputCollectorTests
@@ -30,8 +30,8 @@ public sealed class TestOutputCollectorTests
 		sut.WriteLine("Hello, World!");
 
 		//--- ASSERT ----------------------------------------------------------
-		string singenContent = Assert.Single(sut.Output);
-		Assert.Equal("Hello, World!", singenContent);
+		string singleContent = Assert.Single(sut.Output);
+		Assert.Equal("Hello, World!", singleContent);
 	}
 
 	[Fact]

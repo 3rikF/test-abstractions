@@ -1,11 +1,9 @@
-﻿
-using ErikForwerk.TestAbstractions.STA.Models;
+using ErikForwerk.TestAbstractions.STA.v3.Models;
 
 using Xunit;
-using Xunit.Abstractions;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-namespace ErikForwerk.TestAbstractions.STA.Tests;
+namespace ErikForwerk.TestAbstractions.STA.v3.Tests;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 public sealed class StaTestBaseTests(ITestOutputHelper toh) : StaTestBase(toh)

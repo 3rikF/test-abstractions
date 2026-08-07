@@ -1,12 +1,12 @@
-﻿
-using ErikForwerk.TestAbstractions.Models;
+
+using ErikForwerk.TestAbstractions.v3.Models;
 
 using Microsoft.Extensions.Logging;
 
 using Xunit;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-namespace ErikForwerk.TestAbstractions.Tests;
+namespace ErikForwerk.TestAbstractions.v3.Tests;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 public sealed class TestLoggerTests
@@ -77,4 +77,3 @@ public sealed class TestLoggerTests
 		Assert.Equal(expected, isEnabled);
 	}
 }
-

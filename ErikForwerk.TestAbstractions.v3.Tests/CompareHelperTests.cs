@@ -1,16 +1,15 @@
-﻿
+
 using System.Diagnostics.CodeAnalysis;
 
-using ErikForwerk.TestAbstractions.Models;
-using ErikForwerk.TestAbstractions.Tools;
+using ErikForwerk.TestAbstractions.v3.Models;
+using ErikForwerk.TestAbstractions.v3.Tools;
 
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Sdk;
 
-//-----------------------------------------------------------------------------------------------------------------------------------------
-namespace ErikForwerk.TestAbstractions.Tests;
+namespace ErikForwerk.TestAbstractions.v3.Tests;
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
 using FDTC = CompareHelperTests.FirstDummyTestClass;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -186,11 +185,39 @@ public sealed class CompareHelperTests(ITestOutputHelper toh) : TestBase(toh)
 		else
 		{
 			_ = Assert.IsType<EqualException>(ex);
-			Assert.Contains("Collections differ", ex.Message);
 			TestConsole.WriteLine($"[ ✔️ PASSED] Expected [{ex.GetType().Name}] was thrown for unequal objects.");
+		}
+	}
+
+	[Theory]
+	[InlineData(true, null, null)]
+	[InlineData(true, "", "")]
+	[InlineData(true, "Test", "Test")]
+
+	[InlineData(false, "Test", "Different")]
+	[InlineData(false, "Test", null)]
+	[InlineData(false, null, "Test")]
+	public void CompareTestHelper_AssertCompletelyUnequal_SimpleProperties(bool expectedInequality, string? testStringA, string? testStringB)
+	{
+		//--- ARRANGE ---------------------------------------------------------
+		FDTC obj1 = new() { Name = testStringA };
+		FDTC obj2 = new() { Name = testStringB };
+
+		//--- ACT & ASSERT ----------------------------------------------------
+		Exception exception = Record.Exception(
+			() => CompareHelper.AssertCompletelyUnequal(obj1, obj2, TestConsole));
+
+		if (!expectedInequality)
+		{
+			Assert.Null(exception);
+			TestConsole.WriteLine("[ ✔️ PASSED] Objects are unequal as expected.");
+		}
+		else
+		{
+			NotEqualException ex = Assert.IsType<NotEqualException>(exception);
+			TestConsole.WriteLine($"[ ✔️ PASSED] Expected [{ex.GetType().Name}] was thrown for equal objects.");
 		}
 	}
 
 	#endregion Test Methods
 }
-

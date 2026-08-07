@@ -1,15 +1,14 @@
-﻿
+
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-using ErikForwerk.TestAbstractions.Models;
-using ErikForwerk.TestAbstractions.Tools;
+using ErikForwerk.TestAbstractions.v3.Models;
+using ErikForwerk.TestAbstractions.v3.Tools;
 
 using Xunit;
-using Xunit.Abstractions;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-namespace ErikForwerk.TestAbstractions.Tests;
+namespace ErikForwerk.TestAbstractions.v3.Tests;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : TestBase(testOutputHelper)
@@ -125,7 +124,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(result);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated flat object");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated flat object");
 	}
 
 	[Fact]
@@ -139,7 +138,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(result);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated flat object");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated flat object");
 	}
 
 	private static void AssertNotDefaultValues(TestClassFlat result)
@@ -208,7 +207,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		//--- ASSERT ----------------------------------------------------------
 		AssertNotDefaultValues(result);
 
-		TestConsole.WriteLine($"[✔️ PASSED] All properties have non-default values");
+		TestConsole.WriteLine($"[?? PASSED] All properties have non-default values");
 	}
 
 	[Fact]
@@ -223,7 +222,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		//--- ASSERT ----------------------------------------------------------
 		AssertNotDefaultValues(result);
 
-		TestConsole.WriteLine($"[✔️ PASSED] All properties have non-default values");
+		TestConsole.WriteLine($"[?? PASSED] All properties have non-default values");
 	}
 
 	[Fact]
@@ -237,7 +236,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(result);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated object-tree");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated object-tree");
 	}
 
 	[Fact]
@@ -296,7 +295,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		Assert.NotNull(ex);
 		Assert.Contains(EXPECTED_MESSAGE_PART, ex.Message);
 
-		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw {nameof(NotSupportedException)} with message containing [{EXPECTED_MESSAGE_PART}]");
+		TestConsole.WriteLine($"[?? PASSED] Correctly threw {nameof(NotSupportedException)} with message containing [{EXPECTED_MESSAGE_PART}]");
 	}
 
 	[Theory]
@@ -316,7 +315,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		Assert.NotNull(ex);
 		Assert.Contains(expectedMessagePart, ex.Message);
 
-		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw {ex.GetType().Name} with expected message");
+		TestConsole.WriteLine($"[?? PASSED] Correctly threw {ex.GetType().Name} with expected message");
 	}
 
 	#endregion GenerateClassInstance
@@ -426,7 +425,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		Assert.NotNull(result);
 
 		Assert.InRange(result.Length, minLength, maxLength);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated array with length in range [{minLength}, {maxLength}]");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated array with length in range [{minLength}, {maxLength}]");
 	}
 
 	[Theory]
@@ -452,7 +451,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		ArgumentOutOfRangeException aoorex = Assert.IsType<ArgumentOutOfRangeException>(ex);
 		Assert.Contains(expectedMessagePart, aoorex.Message);
 
-		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw {nameof(ArgumentOutOfRangeException)}]");
+		TestConsole.WriteLine($"[?? PASSED] Correctly threw {nameof(ArgumentOutOfRangeException)}]");
 	}
 
 	[Theory]
@@ -470,7 +469,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(result);
 		Assert.Equal(result.Length, length);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated array with length [{length}]");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated array with length [{length}]");
 	}
 
 	[Fact]
@@ -490,23 +489,23 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		//--- ASSERT ----------------------------------------------------------
 		Assert.NotNull(intArray);
 		Assert.Equal(NUM_ELEMENTS, intArray.Length);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{intArray.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated [{intArray.GetType().GetElementType()!.Name}]-Array");
 
 		Assert.NotNull(strings);
 		Assert.Equal(NUM_ELEMENTS, strings.Length);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{strings.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated [{strings.GetType().GetElementType()!.Name}]-Array");
 
 		Assert.NotNull(objectsA);
 		Assert.Equal(NUM_ELEMENTS, objectsA.Length);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{objectsA.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated [{objectsA.GetType().GetElementType()!.Name}]-Array");
 
 		Assert.NotNull(objectsB);
 		Assert.Equal(NUM_ELEMENTS, objectsB.Length);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{objectsB.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated [{objectsB.GetType().GetElementType()!.Name}]-Array");
 
 		Assert.NotNull(objectsC);
 		Assert.Equal(NUM_ELEMENTS, objectsC.Length);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated [{objectsC.GetType().GetElementType()!.Name}]-Array");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated [{objectsC.GetType().GetElementType()!.Name}]-Array");
 	}
 
 	[Fact]
@@ -524,7 +523,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		Assert.NotNull(ex);
 		Assert.Contains(EXPECTED_MESSAGE_PART, ex.Message);
 
-		TestConsole.WriteLine($"[✔️ PASSED] Correctly threw  [{ex.GetType().Name}] for null type");
+		TestConsole.WriteLine($"[?? PASSED] Correctly threw  [{ex.GetType().Name}] for null type");
 	}
 
 	[Fact]
@@ -537,7 +536,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		ETestEnum value		= sut.GetRandomEnum<ETestEnum>();
 
 		//--- ASSERT ----------------------------------------------------------
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully generated random enum-value [{value}]");
+		TestConsole.WriteLine($"[?? PASSED] Successfully generated random enum-value [{value}]");
 	}
 
 	[Fact]
@@ -552,7 +551,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(ETestEnum.Three, value);
-		TestConsole.WriteLine($"[✔️ PASSED] Successfully randomly chosen to single allowed enum-value [{value}]");
+		TestConsole.WriteLine($"[?? PASSED] Successfully randomly chosen to single allowed enum-value [{value}]");
 	}
 
 	[Fact]
@@ -572,7 +571,7 @@ public sealed class AutoPropertiesTest(ITestOutputHelper testOutputHelper) : Tes
 		_ = Assert.IsType<ETestEnum>(result);
 		Assert.Equal(ETestEnum.Unset, result);
 
-		TestConsole.WriteLine($"[✔️ PASSED] GetDefaultEnumValue returned default enum value [{result}]");
+		TestConsole.WriteLine($"[?? PASSED] GetDefaultEnumValue returned default enum value [{result}]");
 	}
 
 	#endregion Test Methods

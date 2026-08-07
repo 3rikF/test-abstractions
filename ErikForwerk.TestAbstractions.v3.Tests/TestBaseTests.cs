@@ -1,14 +1,13 @@
-﻿
-using ErikForwerk.TestAbstractions.Models;
+
+using ErikForwerk.TestAbstractions.v3.Models;
 
 using Microsoft.Extensions.Logging;
 
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Sdk;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-namespace ErikForwerk.TestAbstractions.Tests;
+namespace ErikForwerk.TestAbstractions.v3.Tests;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
@@ -143,7 +142,7 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 		const string EXPECTED_MESSAGE = "This method should not have been executed.";
 
 		//--- ACT -------------------------------------------------------------
-		FailException ex = Assert.Throws<FailException>(FailTest);
+		XunitException ex = Assert.Throws<XunitException>(FailTest);
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(EXPECTED_MESSAGE, ex.Message);
@@ -161,7 +160,7 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 		const string TEST_PARAM			= "foobar";
 
 		//--- ACT -------------------------------------------------------------
-		FailException ex = Assert.Throws<FailException>(
+		XunitException ex = Assert.Throws<XunitException>(
 			() => FailTest(TEST_PARAM));
 
 		//--- ASSERT ----------------------------------------------------------
@@ -176,13 +175,13 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	public void Test_FailTest_TwoParams()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param1=foobar], [param2=69]";
-		const string TEST_PARAM1		= "foobar";
-		const int TEST_PARAM2			= 69;
+		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param1=Foo], [param2=Bar]";
+		const string TEST_PARAM_1		= "Foo";
+		const string TEST_PARAM_2		= "Bar";
 
 		//--- ACT -------------------------------------------------------------
-		FailException ex = Assert.Throws<FailException>(
-			() => FailTest(TEST_PARAM1, TEST_PARAM2));
+		XunitException ex = Assert.Throws<XunitException>(
+			() => FailTest(TEST_PARAM_1, TEST_PARAM_2));
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(EXPECTED_MESSAGE, ex.Message);
@@ -194,37 +193,36 @@ public sealed class TestBaseTests(ITestOutputHelper toh) : TestBase(toh)
 	#region Test FailTest Functions
 
 	/// <summary>
-	/// Ensures that <see cref="TestBase.FailTest{T1}"/> fails as expected.
-	/// Also covers this code-path for all other test methods, who use (bet never actually call) <see cref="TestBase.FailTest{T1}"/>.
+	/// Ensures that <see cref="TestBase.FailTest{TReturn}"/> fails as expected.
+	/// Also covers this code-path for all other test methods, who use (but never actually call) <see cref="TestBase.FailTest{TReturn}"/>.
 	/// </summary>
 	[Fact]
-	public void Test_FailTest_WithReturnOnly()
+	public void Test_FailTest_Function_Parameterless()
 	{
 		//--- ARRANGE ---------------------------------------------------------
 		const string EXPECTED_MESSAGE = "This method should not have been executed. [no parameters]";
 
 		//--- ACT -------------------------------------------------------------
-		FailException ex = Assert.Throws<FailException>(
-			() => FailTest<int>());
+		XunitException ex = Assert.Throws<XunitException>(FailTest<string>);
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(EXPECTED_MESSAGE, ex.Message);
 	}
 
 	/// <summary>
-	/// Ensures that <see cref="TestBase.FailTest{T1}"/> fails as expected.
-	/// Also covers this code-path for all other test methods, who use (bet never actually call) <see cref="TestBase.FailTest{T1}"/>.
+	/// Ensures that <see cref="TestBase.FailTest{T1, TReturn}"/> fails as expected.
+	/// Also covers this code-path for all other test methods, who use (but never actually call) <see cref="TestBase.FailTest{T1, TReturn}"/>.
 	/// </summary>
 	[Fact]
-	public void Test_FailTest_WithReturn_OneParam()
+	public void Test_FailTest_Function_OneParam()
 	{
 		//--- ARRANGE ---------------------------------------------------------
-		const string EXPECTED_MESSAGE = "This method should not have been executed. [param=foobar]";
-		const string TEST_PARAM = "foobar";
+		const string EXPECTED_MESSAGE	= "This method should not have been executed. [param=TestValue]";
+		const string TEST_PARAM			= "TestValue";
 
 		//--- ACT -------------------------------------------------------------
-		FailException ex = Assert.Throws<FailException>(
-			() => FailTest<string, int>(TEST_PARAM));
+		XunitException ex = Assert.Throws<XunitException>(
+			() => FailTest<string, string>(TEST_PARAM));
 
 		//--- ASSERT ----------------------------------------------------------
 		Assert.Equal(EXPECTED_MESSAGE, ex.Message);

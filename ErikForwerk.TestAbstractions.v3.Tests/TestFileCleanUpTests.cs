@@ -1,11 +1,10 @@
 
-using ErikForwerk.TestAbstractions.Models;
+using ErikForwerk.TestAbstractions.v3.Models;
 
 using Xunit;
-using Xunit.Abstractions;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-namespace ErikForwerk.TestAbstractions.Tests;
+namespace ErikForwerk.TestAbstractions.v3.Tests;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 public sealed class TestFileCleanUpTests(ITestOutputHelper toh) : TestBase(toh)
