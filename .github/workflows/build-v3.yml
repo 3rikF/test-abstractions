@@ -4,8 +4,8 @@ name: Build and Pack v3-NuGet
 env:
   # Replace with your solution name, i.e. MyWpfApp.sln.
   SOLUTION_NAME: "./ErikForwerk.TestAbstractions.v3.slnx"
-  PROJECT_BASE: "./ErikForwerk.TestAbstractions.v3/ErikForwerk.TestAbstractions.csproj"
-  PROJECT_STA: "./ErikForwerk.TestAbstractions.v3.STA/ErikForwerk.TestAbstractions.STA.csproj"
+  PROJECT_BASE: "./ErikForwerk.TestAbstractions.v3/ErikForwerk.TestAbstractions.v3.csproj"
+  PROJECT_STA: "./ErikForwerk.TestAbstractions.v3.STA/ErikForwerk.TestAbstractions.v3.STA.csproj"
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 on:
