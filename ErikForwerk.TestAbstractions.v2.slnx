@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/GitHubFiles/">
+    <File Path=".github/workflows/build-v2.yml" />
+	<File Path=".github/workflows/build-v3.yml" />
+  </Folder>
+  <Project Path="ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj" />
+  <Project Path="ErikForwerk.TestAbstractions.Tests/ErikForwerk.TestAbstractions.Tests.csproj" />
+  <Project Path="ErikForwerk.TestAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj" />
+  <Project Path="ErikForwerk.TestAbstractions.STA.Tests/ErikForwerk.TestAbstractions.STA.Tests.csproj" />
+</Solution>
+

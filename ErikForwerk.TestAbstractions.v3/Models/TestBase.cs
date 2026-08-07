@@ -1,0 +1,162 @@
+using System.Diagnostics.CodeAnalysis;
+
+using Xunit;
+using Xunit.Sdk;
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+namespace ErikForwerk.TestAbstractions.v3.Models;
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+public abstract class TestBase(ITestOutputHelper output)
+{
+	//-----------------------------------------------------------------------------------------------------------------
+	#region Fields
+
+	protected internal const string NULL_STRING			= "<null>";
+	protected internal const string EMPTY_STRING		= "<empty>";
+	protected internal const string WHITESPACE_STRING	= "<whitespace>";
+
+	#endregion Fields
+
+	//-----------------------------------------------------------------------------------------------------------------
+	#region Properties
+
+	protected ITestOutputHelper TestConsole
+		{ get; set; } = output;
+
+	[SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "I don't want to")]
+	protected TestLogger GetTestLogger()
+		=> new ();
+
+	[SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "I don't want to")]
+	protected TestLoggerGeneric<T> GetTestLogger<T>()
+		=> new ();
+
+	#endregion Properties
+
+	//-----------------------------------------------------------------------------------------------------------------
+	#region Methods
+
+	/// <summary>
+	///
+	/// </summary>
+	/// <param name="filePaths"></param>
+	/// <returns></returns>
+	protected IDisposable CreateTestFileCleanUp(params string[] filePaths)
+		=> new TestFileCleanUp(TestConsole, filePaths);
+
+	/// <summary>
+	/// 'B' as in 'Bracketed'.
+	/// Converts the specified object to a string representation enclosed in square brackets,
+	/// handling null and empty values with predefined constants.
+	/// </summary>
+	/// <remarks>
+	/// If the object's string representation already contains square brackets,
+	/// they are trimmed before enclosing the result in new brackets.
+	/// This method ensures consistent formatting for null and empty values.
+	/// </remarks>
+	/// <param name="toStringObject">The object to convert to a string. If null, a predefined constant for null strings is returned.</param>
+	/// <returns>
+	/// A string enclosed in square brackets if the object's string representation is non-empty;
+	/// a predefined constant for null or empty strings otherwise.
+	/// </returns>
+	protected static string B(object? toStringObject)
+	{
+		if (toStringObject?.ToString() is not string s)
+			return NULL_STRING;
+
+		else if (s.Length == 0)
+			return EMPTY_STRING;
+
+		else if (string.IsNullOrWhiteSpace(s))
+			return WHITESPACE_STRING;
+
+		else
+			return string
+				.Concat('[', s.Trim('[', ']'), ']')
+				.Replace("\r\n", "\\r\\n")				//⏎ ␍␊
+				.Replace("\r", "\\r")					//← ␍
+				.Replace("\n", "\\n")					//↓ ␊
+				.Replace("\t", "\\t");
+	}
+
+	/// <summary>
+	/// Returns a friendly type name for the specified type, handling arrays and generic types with appropriate formatting.
+	/// </summary>
+	/// <param name="t">The type for which to get a friendly name.</param>
+	/// <returns>A friendly type name for the specified type.</returns>
+	protected static string GetFriendlyTypeName(Type t)
+	{
+		if (t.IsArray)
+		{
+			int rank			= t.GetArrayRank();
+			string rankBrackets	= rank == 1 ? "[]" : $"[{new string(',', rank - 1)}]";
+			return GetFriendlyTypeName(t.GetElementType()!) + rankBrackets;
+		}
+
+		else if (t.IsGenericType)
+		{
+			string name			= t.Name;
+			int backtickIndex	= name.IndexOf('`');
+			if (backtickIndex > 0)
+				name = name[..backtickIndex];
+
+			Type[] genericArguments = t.GetGenericArguments();
+			string arguments = string.Join(", ", genericArguments.Select(arg => GetFriendlyTypeName(arg)));
+			return $"{name}<{arguments}>";
+		}
+
+		else if (t == typeof(float))
+			return "Float"; // would otherwise be "Single"
+
+		else
+			return t.Name;
+	}
+
+	/// <summary>Returns a short string representation based on the specified type's name.</summary>
+	/// <remarks>
+	/// Shorthand for <see cref="B(object)"/> that extracts the name of the specified type,
+	/// or returns a predefined constant if the type is null.
+	/// </remarks>
+	/// <param name="type">The type whose name is used to generate the string. Can be <see langword="null"/>.</param>
+	/// <returns>A string derived from the name of the specified type, or from a <see langword="null"/> value if the type is <see langword="null"/>.</returns>
+	protected static string B(Type? type)
+	{
+		if (type is null)
+			return NULL_STRING;
+		else
+			return $"[{GetFriendlyTypeName(type)}]";
+	}
+
+	#endregion Methods
+
+	//-----------------------------------------------------------------------------------------------------------------
+	#region Test Helper Actions
+
+	[DoesNotReturn]
+	protected static void FailTest()
+		=> throw new XunitException("This method should not have been executed.");
+
+	[DoesNotReturn]
+	protected static void FailTest<T1>(T1 p1)
+		=> throw new XunitException($"This method should not have been executed. [param={p1}]");
+
+	[DoesNotReturn]
+	protected static void FailTest<T1, T2>(T1 p1, T2 p2)
+		=> throw new XunitException($"This method should not have been executed. [param1={p1}], [param2={p2}]");
+
+	#endregion Test Helper Actions
+
+	//-----------------------------------------------------------------------------------------------------------------
+	#region Test Helper Functions
+
+	[DoesNotReturn]
+	protected static TReturn FailTest<TReturn>()
+		=> throw new XunitException($"This method should not have been executed. [no parameters]");
+
+	[DoesNotReturn]
+	protected static TReturn FailTest<T1, TReturn>(T1 p1)
+		=> throw new XunitException($"This method should not have been executed. [param={p1}]");
+
+	#endregion Test Helper Functions
+}
