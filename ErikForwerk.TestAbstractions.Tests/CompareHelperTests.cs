@@ -4,13 +4,16 @@ using System.Diagnostics.CodeAnalysis;
 using ErikForwerk.TestAbstractions.Models;
 using ErikForwerk.TestAbstractions.Tools;
 
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
 namespace ErikForwerk.TestAbstractions.Tests;
 
 using FDTC = CompareHelperTests.FirstDummyTestClass;
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
 public sealed class CompareHelperTests(ITestOutputHelper toh) : TestBase(toh)
 {
 	//-----------------------------------------------------------------------------------------------------------------

@@ -23,10 +23,10 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
 		<PackageReference Include="xunit.v3.extensibility.core" Version="3.2.2" />
+		<ProjectReference Include="..\ErikForwerk.TestAbstractions.v3\ErikForwerk.TestAbstractions.v3.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ErikForwerk.TestAbstractions.v3\ErikForwerk.TestAbstractions.v3.csproj" />
 		<None Include="..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>

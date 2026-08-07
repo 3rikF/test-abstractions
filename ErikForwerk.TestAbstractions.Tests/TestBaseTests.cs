@@ -3,6 +3,7 @@ using ErikForwerk.TestAbstractions.Models;
 
 using Microsoft.Extensions.Logging;
 
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 

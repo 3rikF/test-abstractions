@@ -5,6 +5,8 @@ using System.Reflection;
 using ErikForwerk.TestAbstractions.v3.Models;
 using ErikForwerk.TestAbstractions.v3.Tools;
 
+using Xunit;
+
 //-----------------------------------------------------------------------------------------------------------------------------------------
 namespace ErikForwerk.TestAbstractions.v3.Tests;
 

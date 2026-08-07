@@ -1,6 +1,7 @@
 ﻿
 using ErikForwerk.TestAbstractions.STA.Models;
 
+using Xunit;
 using Xunit.Abstractions;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------

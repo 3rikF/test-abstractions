@@ -25,9 +25,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\ErikForwerk.TestAbstractions\ErikForwerk.TestAbstractions.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Using Include="Xunit" />
-	</ItemGroup>
-
 </Project>

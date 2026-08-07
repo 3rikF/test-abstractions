@@ -2,6 +2,7 @@
   <Folder Name="/GitHubFiles/">
     <File Path=".github/workflows/build-v2.yml" />
 	<File Path=".github/workflows/build-v3.yml" />
+	<File Path="README.md" />
   </Folder>
   <Project Path="ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj" />
   <Project Path="ErikForwerk.TestAbstractions.Tests/ErikForwerk.TestAbstractions.Tests.csproj" />
