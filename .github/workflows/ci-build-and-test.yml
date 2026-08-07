@@ -48,7 +48,7 @@ jobs:
         Configuration: ${{ matrix.CONFIGURATION }}
 
     - name: Test v2
-      run: dotnet test $env:SOLUTION_V2 --configuration $env:Configuration --no-build --collect:"XPlat Code Coverage;Format=json,cobertura"
+      run: dotnet test $env:SOLUTION_V2 --configuration $env:Configuration --no-build --settings .runsettings --collect:"XPlat Code Coverage;Format=json,cobertura"
       env:
         Configuration: ${{ matrix.CONFIGURATION }}
 
@@ -62,7 +62,7 @@ jobs:
         Configuration: ${{ matrix.CONFIGURATION }}
 
     - name: Test v3
-      run: dotnet test $env:SOLUTION_V3 --configuration $env:Configuration --no-build --collect:"XPlat Code Coverage;Format=json,cobertura"
+      run: dotnet test $env:SOLUTION_V3 --configuration $env:Configuration --no-build --settings .runsettings --collect:"XPlat Code Coverage;Format=json,cobertura"
       env:
         Configuration: ${{ matrix.CONFIGURATION }}
 

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+	<DataCollectors>
+	  <DataCollector friendlyName="XPlat code coverage">
+		<Configuration>
+		  <!-- Exclude test assemblies from coverage -->
+		  <ExcludeByFile>**/obj/**,**/bin/**</ExcludeByFile>
+		  <!-- Exclude classes/methods marked with ExcludeFromCodeCoverage -->
+		  <ExcludeByAttribute>ExcludeFromCodeCoverage,GeneratedCode,CompilerGenerated</ExcludeByAttribute>
+		  <!-- Explicitly exclude test assemblies by name pattern -->
+		  <Exclude>
+			*Tests;
+			*Test
+		  </Exclude>
+		</Configuration>
+	  </DataCollector>
+	</DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
