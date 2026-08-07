@@ -181,13 +181,46 @@ jobs:
     # Pack the NuGet package
     - name: Pack NuGet package
       id: pack
-      run: |
-        dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true -o ./artifacts
-        dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true -o ./artifacts
-
-
-    # Publish to NuGet.org
-    - name: Publish to NuGet
       shell: bash
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: |
+        PACKAGE_VERSION="${{ steps.version.outputs.version }}"
+
+        # Pack the NuGet packages for both projects
+        dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION /p:EnableWindowsTargeting=true -o ./artifacts
+        dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION /p:EnableWindowsTargeting=true -o ./artifacts
+
+        # Build and store the exact package name for the push step (Fail-Safe)
+        PACKAGE_NAME_BASE=$(basename $PROJECT_BASE .csproj | sed 's/\.csproj$//')
+        NUPKG_PATH="./artifacts/${PACKAGE_NAME_BASE}.${PACKAGE_VERSION}.nupkg"
+
+        PACKAGE_NAME_STA=$(basename $PROJECT_STA .csproj | sed 's/\.csproj$//')
+        NUPKG_PATH_STA="./artifacts/${PACKAGE_NAME_STA}.${PACKAGE_VERSION}.nupkg"
+
+        # Export the exact paths as outputs for the push step
+        echo "nupkg_path=$NUPKG_PATH" >> $GITHUB_OUTPUT
+        echo "nupkg_path_sta=$NUPKG_PATH_STA" >> $GITHUB_OUTPUT
+        echo "package_name_base=$PACKAGE_NAME_BASE" >> $GITHUB_OUTPUT
+        echo "package_name_sta=$PACKAGE_NAME_STA" >> $GITHUB_OUTPUT
+
+    # Publish to NuGet (Fail-Safe)
+    - name: Publish to NuGet (Fail-Safe)
+      shell: bash
+      run: |
+        PACKAGE_VERSION="${{ steps.version.outputs.version }}"
+        if dotnet nuget push ${{ steps.pack.outputs.nupkg_path }} --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate; then
+          echo "Published package: ${{ steps.pack.outputs.nupkg_path }}"
+          echo "Check online status at: https://www.nuget.org/packages/${{ steps.pack.outputs.package_name_base }}/${PACKAGE_VERSION}"
+        else
+          echo "::error::Failed to publish package: ${{ steps.pack.outputs.nupkg_path }}"
+          exit 1
+        fi
+
+        # Also publish the STA variant
+        if dotnet nuget push ${{ steps.pack.outputs.nupkg_path_sta }} --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate; then
+          echo "Published STA package: ${{ steps.pack.outputs.nupkg_path_sta }}"
+          echo "Check online status at: https://www.nuget.org/packages/${{ steps.pack.outputs.package_name_sta }}/${PACKAGE_VERSION}"
+        else
+          echo "::error::Failed to publish STA package: ${{ steps.pack.outputs.nupkg_path_sta }}"
+          exit 1
+        fi
 
