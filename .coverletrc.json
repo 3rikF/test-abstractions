@@ -1,0 +1,14 @@
+{
+  "coverage": [
+	{
+	  "exclude-by-file": [
+		"**/obj/**",
+		"**/bin/**"
+	  ],
+	  "exclude-by-attribute": [
+		"ExcludeFromCodeCoverage"
+	  ]
+	}
+  ],
+  "include-test-assembly": false
+}
