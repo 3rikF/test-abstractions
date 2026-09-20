@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/GitHubFiles/">
-    <File Path=".github/workflows/build-v2.yml" />
-    <File Path=".github/workflows/ci-build-and-test.yml" />
+    <File Path=".github/workflows/build-and-publish.yml" />
+    <File Path=".github/workflows/build-and-test.yml" />
 	<File Path="README.md" />
   </Folder>
   <Project Path="ErikForwerk.TestAbstractions.STA.Tests/ErikForwerk.TestAbstractions.STA.Tests.csproj" />
