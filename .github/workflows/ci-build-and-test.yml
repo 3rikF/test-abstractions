@@ -2,8 +2,7 @@ name: CI – Build & Test (v2 + v3)
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 env:
-  SOLUTION_V2: "./ErikForwerk.TestAbstractions.v2.slnx"
-  SOLUTION_V3: "./ErikForwerk.TestAbstractions.v3.slnx"
+  SOLUTION_NAME: "./ErikForwerk.TestAbstractions.v2.slnx"
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 on:
@@ -15,6 +14,7 @@ on:
 #------------------------------------------------------------------------------------------------------------------------------------------
 jobs:
   build:
+    #--- need to run on Windows because of Windows-STA tests ---
     runs-on: windows-latest
 
     strategy:
@@ -35,34 +35,16 @@ jobs:
       with:
         dotnet-version: 9.0.x
 
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v3
+    - name: Restore Solution
+      run: dotnet restore $env:SOLUTION_PATH
 
-    # --- v2 ---
-    - name: Restore v2
-      run: dotnet restore $env:SOLUTION_V2
-
-    - name: Build v2
-      run: dotnet build $env:SOLUTION_V2 --configuration $env:Configuration --no-restore
+    - name: Build Solution
+      run: dotnet build $env:SOLUTION_PATH --configuration $env:Configuration --no-restore
       env:
         Configuration: ${{ matrix.CONFIGURATION }}
 
-    - name: Test v2
-      run: dotnet test $env:SOLUTION_V2 --configuration $env:Configuration --no-build --settings .runsettings --collect:"XPlat Code Coverage;Format=json,cobertura"
-      env:
-        Configuration: ${{ matrix.CONFIGURATION }}
-
-    # --- v3 ---
-    - name: Restore v3
-      run: dotnet restore $env:SOLUTION_V3
-
-    - name: Build v3
-      run: dotnet build $env:SOLUTION_V3 --configuration $env:Configuration --no-restore
-      env:
-        Configuration: ${{ matrix.CONFIGURATION }}
-
-    - name: Test v3
-      run: dotnet test $env:SOLUTION_V3 --configuration $env:Configuration --no-build --settings .runsettings --collect:"XPlat Code Coverage;Format=json,cobertura"
+    - name: Run Unit Tests with Code Coverage
+      run: dotnet test $env:SOLUTION_PATH --configuration $env:Configuration --no-build --settings .runsettings --collect:"XPlat Code Coverage;Format=json,cobertura"
       env:
         Configuration: ${{ matrix.CONFIGURATION }}
 

@@ -2,8 +2,6 @@ name: Build and Pack v2-NuGet
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 env:
-  # Replace with your solution name, i.e. MyWpfApp.sln.
-  SOLUTION_NAME: "./ErikForwerk.TestAbstractions.v2.slnx"
   PROJECT_BASE: "./ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj"
   PROJECT_STA: "./ErikForwerk.TestAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj"
 
@@ -25,12 +23,14 @@ on:
 jobs:
   pack-and-publish:
     # Only run on main branch when tests are successful
+    # Since this action does not run the tests itself (mind the STA-variant), it can use the Ubuntu-latest runner.
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     permissions:
       contents: write  # Required to create and push tags
       packages: write  # Required for publishing packages
+      id-token: write  # enable GitHub OIDC token issuance for this job (for NuGet)
 
     steps:
     - name: Checkout
@@ -122,13 +122,54 @@ jobs:
     # Pack the NuGet package
     - name: Pack NuGet package
       id: pack
-      run: |
-        dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true -o ./artifacts
-        dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=${{ steps.version.outputs.version }} /p:EnableWindowsTargeting=true -o ./artifacts
-
-
-    # Publish to NuGet.org
-    - name: Publish to NuGet
       shell: bash
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: |
+        PACKAGE_VERSION="${{ steps.version.outputs.version }}"
 
+        # Pack the NuGet packages for both projects
+        dotnet pack $PROJECT_BASE --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION /p:EnableWindowsTargeting=true -o ./artifacts
+        dotnet pack $PROJECT_STA --configuration Release --no-build /p:PackageVersion=$PACKAGE_VERSION /p:EnableWindowsTargeting=true -o ./artifacts
+
+        # Build and store the exact package name for the push step (Fail-Safe)
+        PACKAGE_NAME_BASE=$(basename $PROJECT_BASE .csproj | sed 's/\.csproj$//')
+        NUPKG_PATH="./artifacts/${PACKAGE_NAME_BASE}.${PACKAGE_VERSION}.nupkg"
+
+        PACKAGE_NAME_STA=$(basename $PROJECT_STA .csproj | sed 's/\.csproj$//')
+        NUPKG_PATH_STA="./artifacts/${PACKAGE_NAME_STA}.${PACKAGE_VERSION}.nupkg"
+
+        # Export the exact paths as outputs for the push step
+        echo "nupkg_path=$NUPKG_PATH" >> $GITHUB_OUTPUT
+        echo "nupkg_path_sta=$NUPKG_PATH_STA" >> $GITHUB_OUTPUT
+        echo "package_name_base=$PACKAGE_NAME_BASE" >> $GITHUB_OUTPUT
+        echo "package_name_sta=$PACKAGE_NAME_STA" >> $GITHUB_OUTPUT
+
+    # Get a short-lived NuGet API key
+    - name: NuGet login (OIDC → temp API key)
+      uses: NuGet/login@v1
+      id: login
+      with:
+        # Recommended: use a secret like ${{ secrets.NUGET_USER }} for your nuget.org username (profile name), NOT your email address
+        # My five cents: The username is public, the GiHub-repo is linked in NuGet - this recommendation seems pointless.
+        user: ${{ secrets.NUGET_USER }}
+
+    # Publish to NuGet (Fail-Safe)
+    - name: Publish to NuGet (Fail-Safe)
+      shell: bash
+      run: |
+        PACKAGE_VERSION="${{ steps.version.outputs.version }}"
+        if dotnet nuget push ${{ steps.pack.outputs.nupkg_path }} --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate; then
+          echo "Published package: ${{ steps.pack.outputs.nupkg_path }}"
+          echo "Check online status at: https://www.nuget.org/packages/${{ steps.pack.outputs.package_name_base }}/${PACKAGE_VERSION}"
+        else
+          echo "::error::Failed to publish package: ${{ steps.pack.outputs.nupkg_path }}"
+          exit 1
+        fi
+
+        # Also publish the STA variant
+        if dotnet nuget push ${{ steps.pack.outputs.nupkg_path_sta }} --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate; then
+          echo "Published STA package: ${{ steps.pack.outputs.nupkg_path_sta }}"
+          echo "Check online status at: https://www.nuget.org/packages/${{ steps.pack.outputs.package_name_sta }}/${PACKAGE_VERSION}"
+        else
+          echo "::error::Failed to publish STA package: ${{ steps.pack.outputs.nupkg_path_sta }}"
+          exit 1
+        fi

@@ -4,9 +4,9 @@
     <File Path=".github/workflows/ci-build-and-test.yml" />
 	<File Path="README.md" />
   </Folder>
-  <Project Path="ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj" />
-  <Project Path="ErikForwerk.TestAbstractions.Tests/ErikForwerk.TestAbstractions.Tests.csproj" />
-  <Project Path="ErikForwerk.TestAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj" />
   <Project Path="ErikForwerk.TestAbstractions.STA.Tests/ErikForwerk.TestAbstractions.STA.Tests.csproj" />
+  <Project Path="ErikForwerk.TestAbstractions.STA/ErikForwerk.TestAbstractions.STA.csproj" />
+  <Project Path="ErikForwerk.TestAbstractions.Tests/ErikForwerk.TestAbstractions.Tests.csproj" />
+  <Project Path="ErikForwerk.TestAbstractions/ErikForwerk.TestAbstractions.csproj" />
 </Solution>
 
